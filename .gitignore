@@ -1,0 +1,10 @@
+cmake-build-debug/*
+cmake-build-debug
+build/*
+python/PlanViz/*
+python/PlanViz
+tmp_*
+outputs/*
+.idea/*
+map_file/*
+.DS_Store
