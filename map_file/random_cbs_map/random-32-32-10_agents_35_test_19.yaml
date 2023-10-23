@@ -1,0 +1,142 @@
+agents:
+- name: agent0
+  potentialGoals:
+  - [28, 26]
+  start: [15, 2]
+- name: agent1
+  potentialGoals:
+  - [9, 21]
+  start: [22, 16]
+- name: agent2
+  potentialGoals:
+  - [2, 6]
+  start: [7, 9]
+- name: agent3
+  potentialGoals:
+  - [17, 9]
+  start: [19, 23]
+- name: agent4
+  potentialGoals:
+  - [13, 7]
+  start: [2, 29]
+- name: agent5
+  potentialGoals:
+  - [13, 19]
+  start: [14, 26]
+- name: agent6
+  potentialGoals:
+  - [21, 13]
+  start: [0, 1]
+- name: agent7
+  potentialGoals:
+  - [19, 24]
+  start: [4, 7]
+- name: agent8
+  potentialGoals:
+  - [28, 8]
+  start: [10, 29]
+- name: agent9
+  potentialGoals:
+  - [18, 20]
+  start: [1, 24]
+- name: agent10
+  potentialGoals:
+  - [28, 12]
+  start: [9, 31]
+- name: agent11
+  potentialGoals:
+  - [23, 26]
+  start: [0, 21]
+- name: agent12
+  potentialGoals:
+  - [17, 14]
+  start: [7, 3]
+- name: agent13
+  potentialGoals:
+  - [1, 13]
+  start: [13, 31]
+- name: agent14
+  potentialGoals:
+  - [4, 17]
+  start: [14, 9]
+- name: agent15
+  potentialGoals:
+  - [11, 17]
+  start: [12, 2]
+- name: agent16
+  potentialGoals:
+  - [24, 8]
+  start: [16, 29]
+- name: agent17
+  potentialGoals:
+  - [22, 28]
+  start: [23, 24]
+- name: agent18
+  potentialGoals:
+  - [0, 5]
+  start: [5, 10]
+- name: agent19
+  potentialGoals:
+  - [9, 11]
+  start: [24, 9]
+- name: agent20
+  potentialGoals:
+  - [23, 24]
+  start: [16, 9]
+- name: agent21
+  potentialGoals:
+  - [2, 1]
+  start: [11, 24]
+- name: agent22
+  potentialGoals:
+  - [0, 21]
+  start: [6, 27]
+- name: agent23
+  potentialGoals:
+  - [6, 26]
+  start: [10, 3]
+- name: agent24
+  potentialGoals:
+  - [5, 23]
+  start: [26, 10]
+- name: agent25
+  potentialGoals:
+  - [23, 0]
+  start: [24, 15]
+- name: agent26
+  potentialGoals:
+  - [16, 29]
+  start: [4, 5]
+- name: agent27
+  potentialGoals:
+  - [4, 8]
+  start: [18, 25]
+- name: agent28
+  potentialGoals:
+  - [31, 14]
+  start: [10, 5]
+- name: agent29
+  potentialGoals:
+  - [2, 29]
+  start: [7, 0]
+- name: agent30
+  potentialGoals:
+  - [5, 6]
+  start: [31, 8]
+- name: agent31
+  potentialGoals:
+  - [12, 12]
+  start: [5, 16]
+- name: agent32
+  potentialGoals:
+  - [0, 20]
+  start: [8, 16]
+- name: agent33
+  potentialGoals:
+  - [18, 27]
+  start: [13, 26]
+- name: agent34
+  potentialGoals:
+  - [10, 7]
+  start: [10, 10]
+map: random-32-32-10.map

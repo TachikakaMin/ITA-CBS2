@@ -1,0 +1,122 @@
+agents:
+- name: agent0
+  potentialGoals:
+  - [9, 27]
+  start: [27, 29]
+- name: agent1
+  potentialGoals:
+  - [21, 11]
+  start: [11, 9]
+- name: agent2
+  potentialGoals:
+  - [8, 17]
+  start: [1, 2]
+- name: agent3
+  potentialGoals:
+  - [8, 31]
+  start: [16, 4]
+- name: agent4
+  potentialGoals:
+  - [12, 29]
+  start: [9, 4]
+- name: agent5
+  potentialGoals:
+  - [27, 1]
+  start: [7, 14]
+- name: agent6
+  potentialGoals:
+  - [9, 1]
+  start: [3, 31]
+- name: agent7
+  potentialGoals:
+  - [10, 9]
+  start: [11, 0]
+- name: agent8
+  potentialGoals:
+  - [31, 4]
+  start: [3, 23]
+- name: agent9
+  potentialGoals:
+  - [15, 1]
+  start: [13, 24]
+- name: agent10
+  potentialGoals:
+  - [24, 1]
+  start: [10, 14]
+- name: agent11
+  potentialGoals:
+  - [28, 9]
+  start: [22, 2]
+- name: agent12
+  potentialGoals:
+  - [18, 10]
+  start: [24, 11]
+- name: agent13
+  potentialGoals:
+  - [7, 16]
+  start: [19, 2]
+- name: agent14
+  potentialGoals:
+  - [22, 8]
+  start: [16, 8]
+- name: agent15
+  potentialGoals:
+  - [27, 9]
+  start: [6, 16]
+- name: agent16
+  potentialGoals:
+  - [9, 5]
+  start: [18, 29]
+- name: agent17
+  potentialGoals:
+  - [6, 29]
+  start: [27, 13]
+- name: agent18
+  potentialGoals:
+  - [6, 12]
+  start: [29, 24]
+- name: agent19
+  potentialGoals:
+  - [17, 1]
+  start: [2, 3]
+- name: agent20
+  potentialGoals:
+  - [30, 23]
+  start: [7, 2]
+- name: agent21
+  potentialGoals:
+  - [3, 17]
+  start: [7, 15]
+- name: agent22
+  potentialGoals:
+  - [21, 7]
+  start: [15, 6]
+- name: agent23
+  potentialGoals:
+  - [31, 25]
+  start: [5, 26]
+- name: agent24
+  potentialGoals:
+  - [29, 7]
+  start: [5, 1]
+- name: agent25
+  potentialGoals:
+  - [11, 28]
+  start: [30, 7]
+- name: agent26
+  potentialGoals:
+  - [24, 24]
+  start: [1, 22]
+- name: agent27
+  potentialGoals:
+  - [15, 19]
+  start: [3, 30]
+- name: agent28
+  potentialGoals:
+  - [25, 7]
+  start: [8, 13]
+- name: agent29
+  potentialGoals:
+  - [25, 27]
+  start: [22, 28]
+map: random-32-32-10.map

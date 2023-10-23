@@ -1,0 +1,242 @@
+agents:
+- name: agent0
+  potentialGoals:
+  - [18, 30]
+  start: [24, 0]
+- name: agent1
+  potentialGoals:
+  - [13, 8]
+  start: [5, 23]
+- name: agent2
+  potentialGoals:
+  - [25, 2]
+  start: [10, 12]
+- name: agent3
+  potentialGoals:
+  - [1, 2]
+  start: [15, 29]
+- name: agent4
+  potentialGoals:
+  - [6, 20]
+  start: [20, 19]
+- name: agent5
+  potentialGoals:
+  - [29, 25]
+  start: [13, 28]
+- name: agent6
+  potentialGoals:
+  - [8, 16]
+  start: [8, 22]
+- name: agent7
+  potentialGoals:
+  - [21, 2]
+  start: [0, 31]
+- name: agent8
+  potentialGoals:
+  - [23, 6]
+  start: [25, 10]
+- name: agent9
+  potentialGoals:
+  - [17, 26]
+  start: [21, 23]
+- name: agent10
+  potentialGoals:
+  - [21, 5]
+  start: [31, 5]
+- name: agent11
+  potentialGoals:
+  - [11, 5]
+  start: [19, 16]
+- name: agent12
+  potentialGoals:
+  - [22, 6]
+  start: [25, 14]
+- name: agent13
+  potentialGoals:
+  - [10, 4]
+  start: [24, 29]
+- name: agent14
+  potentialGoals:
+  - [15, 2]
+  start: [21, 20]
+- name: agent15
+  potentialGoals:
+  - [25, 15]
+  start: [19, 31]
+- name: agent16
+  potentialGoals:
+  - [22, 29]
+  start: [8, 17]
+- name: agent17
+  potentialGoals:
+  - [6, 24]
+  start: [19, 2]
+- name: agent18
+  potentialGoals:
+  - [6, 15]
+  start: [3, 28]
+- name: agent19
+  potentialGoals:
+  - [23, 11]
+  start: [9, 28]
+- name: agent20
+  potentialGoals:
+  - [6, 2]
+  start: [11, 26]
+- name: agent21
+  potentialGoals:
+  - [30, 1]
+  start: [26, 24]
+- name: agent22
+  potentialGoals:
+  - [13, 12]
+  start: [7, 10]
+- name: agent23
+  potentialGoals:
+  - [31, 19]
+  start: [8, 25]
+- name: agent24
+  potentialGoals:
+  - [13, 3]
+  start: [26, 22]
+- name: agent25
+  potentialGoals:
+  - [2, 9]
+  start: [13, 19]
+- name: agent26
+  potentialGoals:
+  - [25, 14]
+  start: [23, 22]
+- name: agent27
+  potentialGoals:
+  - [18, 19]
+  start: [9, 10]
+- name: agent28
+  potentialGoals:
+  - [24, 1]
+  start: [21, 8]
+- name: agent29
+  potentialGoals:
+  - [4, 6]
+  start: [22, 30]
+- name: agent30
+  potentialGoals:
+  - [8, 21]
+  start: [26, 7]
+- name: agent31
+  potentialGoals:
+  - [24, 23]
+  start: [28, 5]
+- name: agent32
+  potentialGoals:
+  - [13, 20]
+  start: [7, 11]
+- name: agent33
+  potentialGoals:
+  - [19, 18]
+  start: [6, 19]
+- name: agent34
+  potentialGoals:
+  - [22, 11]
+  start: [13, 31]
+- name: agent35
+  potentialGoals:
+  - [18, 7]
+  start: [3, 20]
+- name: agent36
+  potentialGoals:
+  - [11, 4]
+  start: [10, 26]
+- name: agent37
+  potentialGoals:
+  - [24, 0]
+  start: [29, 13]
+- name: agent38
+  potentialGoals:
+  - [5, 14]
+  start: [3, 24]
+- name: agent39
+  potentialGoals:
+  - [20, 17]
+  start: [15, 31]
+- name: agent40
+  potentialGoals:
+  - [0, 28]
+  start: [19, 23]
+- name: agent41
+  potentialGoals:
+  - [7, 31]
+  start: [20, 13]
+- name: agent42
+  potentialGoals:
+  - [22, 17]
+  start: [7, 31]
+- name: agent43
+  potentialGoals:
+  - [30, 20]
+  start: [18, 18]
+- name: agent44
+  potentialGoals:
+  - [7, 16]
+  start: [7, 17]
+- name: agent45
+  potentialGoals:
+  - [9, 15]
+  start: [15, 6]
+- name: agent46
+  potentialGoals:
+  - [7, 10]
+  start: [11, 3]
+- name: agent47
+  potentialGoals:
+  - [31, 1]
+  start: [14, 25]
+- name: agent48
+  potentialGoals:
+  - [13, 18]
+  start: [6, 14]
+- name: agent49
+  potentialGoals:
+  - [1, 13]
+  start: [8, 0]
+- name: agent50
+  potentialGoals:
+  - [31, 21]
+  start: [1, 6]
+- name: agent51
+  potentialGoals:
+  - [16, 12]
+  start: [31, 30]
+- name: agent52
+  potentialGoals:
+  - [0, 24]
+  start: [23, 19]
+- name: agent53
+  potentialGoals:
+  - [14, 26]
+  start: [21, 12]
+- name: agent54
+  potentialGoals:
+  - [25, 11]
+  start: [27, 6]
+- name: agent55
+  potentialGoals:
+  - [19, 10]
+  start: [27, 24]
+- name: agent56
+  potentialGoals:
+  - [27, 12]
+  start: [12, 16]
+- name: agent57
+  potentialGoals:
+  - [1, 24]
+  start: [18, 14]
+- name: agent58
+  potentialGoals:
+  - [9, 29]
+  start: [18, 3]
+- name: agent59
+  potentialGoals:
+  - [1, 12]
+  start: [25, 19]
+map: random-32-32-10.map

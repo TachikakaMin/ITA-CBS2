@@ -1,0 +1,122 @@
+agents:
+- name: agent0
+  potentialGoals:
+  - [17, 6]
+  start: [11, 28]
+- name: agent1
+  potentialGoals:
+  - [31, 30]
+  start: [25, 5]
+- name: agent2
+  potentialGoals:
+  - [25, 14]
+  start: [28, 9]
+- name: agent3
+  potentialGoals:
+  - [12, 24]
+  start: [31, 6]
+- name: agent4
+  potentialGoals:
+  - [27, 2]
+  start: [23, 5]
+- name: agent5
+  potentialGoals:
+  - [24, 10]
+  start: [13, 29]
+- name: agent6
+  potentialGoals:
+  - [5, 31]
+  start: [11, 27]
+- name: agent7
+  potentialGoals:
+  - [12, 6]
+  start: [23, 2]
+- name: agent8
+  potentialGoals:
+  - [1, 15]
+  start: [9, 10]
+- name: agent9
+  potentialGoals:
+  - [16, 16]
+  start: [20, 7]
+- name: agent10
+  potentialGoals:
+  - [13, 1]
+  start: [29, 13]
+- name: agent11
+  potentialGoals:
+  - [23, 16]
+  start: [15, 27]
+- name: agent12
+  potentialGoals:
+  - [14, 17]
+  start: [9, 31]
+- name: agent13
+  potentialGoals:
+  - [22, 7]
+  start: [25, 4]
+- name: agent14
+  potentialGoals:
+  - [1, 27]
+  start: [29, 8]
+- name: agent15
+  potentialGoals:
+  - [5, 29]
+  start: [2, 27]
+- name: agent16
+  potentialGoals:
+  - [29, 0]
+  start: [30, 7]
+- name: agent17
+  potentialGoals:
+  - [7, 10]
+  start: [24, 22]
+- name: agent18
+  potentialGoals:
+  - [26, 2]
+  start: [23, 29]
+- name: agent19
+  potentialGoals:
+  - [1, 10]
+  start: [9, 23]
+- name: agent20
+  potentialGoals:
+  - [3, 27]
+  start: [13, 31]
+- name: agent21
+  potentialGoals:
+  - [27, 31]
+  start: [18, 3]
+- name: agent22
+  potentialGoals:
+  - [15, 3]
+  start: [31, 18]
+- name: agent23
+  potentialGoals:
+  - [30, 29]
+  start: [16, 26]
+- name: agent24
+  potentialGoals:
+  - [6, 16]
+  start: [8, 9]
+- name: agent25
+  potentialGoals:
+  - [13, 12]
+  start: [18, 8]
+- name: agent26
+  potentialGoals:
+  - [22, 21]
+  start: [20, 21]
+- name: agent27
+  potentialGoals:
+  - [25, 16]
+  start: [30, 20]
+- name: agent28
+  potentialGoals:
+  - [12, 9]
+  start: [3, 30]
+- name: agent29
+  potentialGoals:
+  - [31, 17]
+  start: [20, 15]
+map: random-32-32-10.map

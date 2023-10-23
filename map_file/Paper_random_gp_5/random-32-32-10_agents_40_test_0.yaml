@@ -1,0 +1,322 @@
+agents:
+- name: agent0
+  potentialGoals:
+  - [11, 24]
+  - [18, 24]
+  - [0, 30]
+  - [3, 0]
+  - [18, 30]
+  start: [26, 30]
+- name: agent1
+  potentialGoals:
+  - [11, 24]
+  - [18, 24]
+  - [0, 30]
+  - [3, 0]
+  - [18, 30]
+  start: [22, 29]
+- name: agent2
+  potentialGoals:
+  - [11, 24]
+  - [18, 24]
+  - [0, 30]
+  - [3, 0]
+  - [18, 30]
+  start: [29, 24]
+- name: agent3
+  potentialGoals:
+  - [11, 24]
+  - [18, 24]
+  - [0, 30]
+  - [3, 0]
+  - [18, 30]
+  start: [30, 3]
+- name: agent4
+  potentialGoals:
+  - [11, 24]
+  - [18, 24]
+  - [0, 30]
+  - [3, 0]
+  - [18, 30]
+  start: [27, 27]
+- name: agent5
+  potentialGoals:
+  - [21, 21]
+  - [5, 21]
+  - [17, 15]
+  - [2, 28]
+  - [22, 15]
+  start: [19, 8]
+- name: agent6
+  potentialGoals:
+  - [21, 21]
+  - [5, 21]
+  - [17, 15]
+  - [2, 28]
+  - [22, 15]
+  start: [21, 20]
+- name: agent7
+  potentialGoals:
+  - [21, 21]
+  - [5, 21]
+  - [17, 15]
+  - [2, 28]
+  - [22, 15]
+  start: [18, 2]
+- name: agent8
+  potentialGoals:
+  - [21, 21]
+  - [5, 21]
+  - [17, 15]
+  - [2, 28]
+  - [22, 15]
+  start: [23, 11]
+- name: agent9
+  potentialGoals:
+  - [21, 21]
+  - [5, 21]
+  - [17, 15]
+  - [2, 28]
+  - [22, 15]
+  start: [19, 13]
+- name: agent10
+  potentialGoals:
+  - [18, 26]
+  - [6, 12]
+  - [16, 16]
+  - [21, 6]
+  - [10, 23]
+  start: [30, 25]
+- name: agent11
+  potentialGoals:
+  - [18, 26]
+  - [6, 12]
+  - [16, 16]
+  - [21, 6]
+  - [10, 23]
+  start: [31, 7]
+- name: agent12
+  potentialGoals:
+  - [18, 26]
+  - [6, 12]
+  - [16, 16]
+  - [21, 6]
+  - [10, 23]
+  start: [27, 3]
+- name: agent13
+  potentialGoals:
+  - [18, 26]
+  - [6, 12]
+  - [16, 16]
+  - [21, 6]
+  - [10, 23]
+  start: [24, 10]
+- name: agent14
+  potentialGoals:
+  - [18, 26]
+  - [6, 12]
+  - [16, 16]
+  - [21, 6]
+  - [10, 23]
+  start: [12, 23]
+- name: agent15
+  potentialGoals:
+  - [11, 30]
+  - [31, 24]
+  - [26, 6]
+  - [7, 28]
+  - [13, 3]
+  start: [15, 4]
+- name: agent16
+  potentialGoals:
+  - [11, 30]
+  - [31, 24]
+  - [26, 6]
+  - [7, 28]
+  - [13, 3]
+  start: [11, 16]
+- name: agent17
+  potentialGoals:
+  - [11, 30]
+  - [31, 24]
+  - [26, 6]
+  - [7, 28]
+  - [13, 3]
+  start: [11, 28]
+- name: agent18
+  potentialGoals:
+  - [11, 30]
+  - [31, 24]
+  - [26, 6]
+  - [7, 28]
+  - [13, 3]
+  start: [6, 24]
+- name: agent19
+  potentialGoals:
+  - [11, 30]
+  - [31, 24]
+  - [26, 6]
+  - [7, 28]
+  - [13, 3]
+  start: [19, 14]
+- name: agent20
+  potentialGoals:
+  - [19, 24]
+  - [5, 10]
+  - [3, 7]
+  - [23, 10]
+  - [25, 16]
+  start: [14, 9]
+- name: agent21
+  potentialGoals:
+  - [19, 24]
+  - [5, 10]
+  - [3, 7]
+  - [23, 10]
+  - [25, 16]
+  start: [29, 16]
+- name: agent22
+  potentialGoals:
+  - [19, 24]
+  - [5, 10]
+  - [3, 7]
+  - [23, 10]
+  - [25, 16]
+  start: [9, 9]
+- name: agent23
+  potentialGoals:
+  - [19, 24]
+  - [5, 10]
+  - [3, 7]
+  - [23, 10]
+  - [25, 16]
+  start: [4, 17]
+- name: agent24
+  potentialGoals:
+  - [19, 24]
+  - [5, 10]
+  - [3, 7]
+  - [23, 10]
+  - [25, 16]
+  start: [25, 19]
+- name: agent25
+  potentialGoals:
+  - [2, 17]
+  - [11, 19]
+  - [16, 23]
+  - [9, 16]
+  - [29, 16]
+  start: [13, 19]
+- name: agent26
+  potentialGoals:
+  - [2, 17]
+  - [11, 19]
+  - [16, 23]
+  - [9, 16]
+  - [29, 16]
+  start: [18, 27]
+- name: agent27
+  potentialGoals:
+  - [2, 17]
+  - [11, 19]
+  - [16, 23]
+  - [9, 16]
+  - [29, 16]
+  start: [24, 9]
+- name: agent28
+  potentialGoals:
+  - [2, 17]
+  - [11, 19]
+  - [16, 23]
+  - [9, 16]
+  - [29, 16]
+  start: [5, 29]
+- name: agent29
+  potentialGoals:
+  - [2, 17]
+  - [11, 19]
+  - [16, 23]
+  - [9, 16]
+  - [29, 16]
+  start: [18, 4]
+- name: agent30
+  potentialGoals:
+  - [6, 22]
+  - [7, 12]
+  - [3, 9]
+  - [21, 16]
+  - [14, 2]
+  start: [5, 23]
+- name: agent31
+  potentialGoals:
+  - [6, 22]
+  - [7, 12]
+  - [3, 9]
+  - [21, 16]
+  - [14, 2]
+  start: [13, 20]
+- name: agent32
+  potentialGoals:
+  - [6, 22]
+  - [7, 12]
+  - [3, 9]
+  - [21, 16]
+  - [14, 2]
+  start: [2, 6]
+- name: agent33
+  potentialGoals:
+  - [6, 22]
+  - [7, 12]
+  - [3, 9]
+  - [21, 16]
+  - [14, 2]
+  start: [6, 12]
+- name: agent34
+  potentialGoals:
+  - [6, 22]
+  - [7, 12]
+  - [3, 9]
+  - [21, 16]
+  - [14, 2]
+  start: [12, 18]
+- name: agent35
+  potentialGoals:
+  - [31, 2]
+  - [12, 22]
+  - [22, 21]
+  - [28, 27]
+  - [12, 21]
+  start: [13, 31]
+- name: agent36
+  potentialGoals:
+  - [31, 2]
+  - [12, 22]
+  - [22, 21]
+  - [28, 27]
+  - [12, 21]
+  start: [5, 5]
+- name: agent37
+  potentialGoals:
+  - [31, 2]
+  - [12, 22]
+  - [22, 21]
+  - [28, 27]
+  - [12, 21]
+  start: [28, 7]
+- name: agent38
+  potentialGoals:
+  - [31, 2]
+  - [12, 22]
+  - [22, 21]
+  - [28, 27]
+  - [12, 21]
+  start: [15, 26]
+- name: agent39
+  potentialGoals:
+  - [31, 2]
+  - [12, 22]
+  - [22, 21]
+  - [28, 27]
+  - [12, 21]
+  start: [18, 19]
+map: random-32-32-10.map

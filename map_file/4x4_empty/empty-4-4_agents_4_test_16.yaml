@@ -1,0 +1,14 @@
+agents:
+- goal: [0, 2]
+  name: agent0
+  start: [3, 0]
+- goal: [2, 3]
+  name: agent1
+  start: [0, 0]
+- goal: [1, 3]
+  name: agent2
+  start: [3, 3]
+- goal: [0, 3]
+  name: agent3
+  start: [0, 1]
+map: empty-4-4.map

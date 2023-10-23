@@ -1,0 +1,122 @@
+agents:
+- name: agent0
+  potentialGoals:
+  - [20, 8]
+  start: [29, 7]
+- name: agent1
+  potentialGoals:
+  - [1, 2]
+  start: [0, 0]
+- name: agent2
+  potentialGoals:
+  - [21, 8]
+  start: [16, 20]
+- name: agent3
+  potentialGoals:
+  - [27, 9]
+  start: [18, 23]
+- name: agent4
+  potentialGoals:
+  - [3, 25]
+  start: [10, 20]
+- name: agent5
+  potentialGoals:
+  - [16, 8]
+  start: [10, 30]
+- name: agent6
+  potentialGoals:
+  - [21, 28]
+  start: [30, 19]
+- name: agent7
+  potentialGoals:
+  - [14, 14]
+  start: [20, 10]
+- name: agent8
+  potentialGoals:
+  - [22, 2]
+  start: [22, 6]
+- name: agent9
+  potentialGoals:
+  - [1, 28]
+  start: [28, 6]
+- name: agent10
+  potentialGoals:
+  - [14, 5]
+  start: [9, 5]
+- name: agent11
+  potentialGoals:
+  - [4, 7]
+  start: [31, 7]
+- name: agent12
+  potentialGoals:
+  - [7, 6]
+  start: [21, 15]
+- name: agent13
+  potentialGoals:
+  - [11, 17]
+  start: [9, 31]
+- name: agent14
+  potentialGoals:
+  - [26, 16]
+  start: [0, 30]
+- name: agent15
+  potentialGoals:
+  - [29, 0]
+  start: [21, 11]
+- name: agent16
+  potentialGoals:
+  - [31, 25]
+  start: [26, 9]
+- name: agent17
+  potentialGoals:
+  - [16, 1]
+  start: [6, 1]
+- name: agent18
+  potentialGoals:
+  - [4, 29]
+  start: [0, 13]
+- name: agent19
+  potentialGoals:
+  - [12, 15]
+  start: [4, 10]
+- name: agent20
+  potentialGoals:
+  - [31, 20]
+  start: [8, 25]
+- name: agent21
+  potentialGoals:
+  - [2, 20]
+  start: [17, 22]
+- name: agent22
+  potentialGoals:
+  - [22, 18]
+  start: [8, 3]
+- name: agent23
+  potentialGoals:
+  - [25, 0]
+  start: [1, 28]
+- name: agent24
+  potentialGoals:
+  - [13, 12]
+  start: [15, 17]
+- name: agent25
+  potentialGoals:
+  - [27, 3]
+  start: [19, 29]
+- name: agent26
+  potentialGoals:
+  - [15, 25]
+  start: [1, 7]
+- name: agent27
+  potentialGoals:
+  - [8, 28]
+  start: [1, 9]
+- name: agent28
+  potentialGoals:
+  - [6, 12]
+  start: [13, 18]
+- name: agent29
+  potentialGoals:
+  - [31, 10]
+  start: [8, 18]
+map: random-32-32-10.map

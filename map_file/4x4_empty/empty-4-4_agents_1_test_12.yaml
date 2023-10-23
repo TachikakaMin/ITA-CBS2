@@ -1,0 +1,5 @@
+agents:
+- goal: [3, 3]
+  name: agent0
+  start: [1, 1]
+map: empty-4-4.map
