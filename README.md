@@ -40,9 +40,9 @@ Reproduce Paper Results:
 
 ```bash
 ./run_test/single_exp1.sh build/ITACBS_remake 1 exp1_ITACBS.txt
-./run_test/single_exp1.sh build/CBSTA 1 exp1_CBSTA.txt
+./run_test/single_exp1.sh build/CBSTA_remake 1 exp1_CBSTA.txt
 ./run_test/single_exp2.sh build/ITACBS_remake 1 exp2_ITACBS.txt
-./run_test/single_exp2.sh build/CBSTA 1 exp2_ITACBS.txt
+./run_test/single_exp2.sh build/CBSTA_remake 1 exp2_CBSTA.txt
 ```
 
 
