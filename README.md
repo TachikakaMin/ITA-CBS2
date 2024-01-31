@@ -36,6 +36,16 @@ Test:
 python python/compareTYM2TA.py --TYMPath cmake-build-debug/CBSTA_remake --CBSTAPath cmake-build-debug/ITACBS_remake --map_dir map_file/Paper_boston_256_256_060 --time 15 --seed 0
 ```
 
+Reproduce Paper Results:
+
+```bash
+./run_test/single_exp1.sh build/ITACBS_remake 1 exp1_ITACBS.txt
+./run_test/single_exp1.sh build/CBSTA 1 exp1_CBSTA.txt
+./run_test/single_exp2.sh build/ITACBS_remake 1 exp2_ITACBS.txt
+./run_test/single_exp2.sh build/CBSTA 1 exp2_ITACBS.txt
+```
+
+
 Visualize:
 
 Old:
