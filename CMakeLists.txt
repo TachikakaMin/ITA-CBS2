@@ -31,6 +31,28 @@ target_link_libraries(CBSTA_remake
         yaml-cpp
         )
 
+add_executable(ITA_ECBS_v0 main_ITA_ECBS_v0.cpp include/ITA_ECBS_v0/ITA_ECBS.cpp include/ITA_ECBS_v0/ITA_ECBSNode.cpp include/common.cpp)
+target_link_libraries(ITA_ECBS_v0
+        ${Boost_LIBRARIES}
+        yaml-cpp
+        )
+
+
+
+add_executable(ITA_ECBS main_ITA_ECBS.cpp include/ITA_ECBS/ITA_ECBS.cpp include/ITA_ECBS/ITA_ECBSNode.cpp include/common.cpp)
+target_link_libraries(ITA_ECBS
+        ${Boost_LIBRARIES}
+        yaml-cpp
+        )
+
+
+
+add_executable(ECBSTA main_ECBSTA.cpp include/ECBSTA/ECBSTANode.cpp include/ECBSTA/ECBSTA.cpp include/ECBSTA/TANode.cpp include/common.cpp)
+target_link_libraries(ECBSTA
+        ${Boost_LIBRARIES}
+        yaml-cpp
+        )
+
 
 #option(SERIAL "Option for serial version" OFF)
 #if(SERIAL)

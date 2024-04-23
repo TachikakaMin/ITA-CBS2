@@ -1,6 +1,3 @@
-//
-// Created by YIMIN TANG on 3/19/23.
-//
 
 #ifndef ITACBS_REMAKE_COMMON_HPP
 #define ITACBS_REMAKE_COMMON_HPP
@@ -19,6 +16,7 @@
 #include <string>
 #include <filesystem>
 #include <unordered_set>
+#include <queue>
 
 #include <boost/heap/pairing_heap.hpp>
 #include <boost/unordered_set.hpp>
@@ -31,10 +29,14 @@
 #include <boost/utility.hpp>
 #include <boost/container/vector.hpp>
 #include <boost/dynamic_bitset.hpp>
+#include <boost/thread.hpp>
+#include <boost/random.hpp>
 
 using boost::dynamic_bitset;
 using boost::range::reverse;
 using boost::shared_ptr;
+using boost::random::mt19937;
+using boost::random::uniform_real_distribution;
 using boost::heap::pairing_heap;
 using boost::heap::compare;
 using boost::unordered_map;
@@ -54,6 +56,7 @@ using std::tie;
 using std::min;
 using std::max;
 using std::make_shared;
+using std::queue;
 using std::clock;
 using std::cout;
 using std::endl;
@@ -296,7 +299,6 @@ struct Constraints {
 
 void createConstraintsFromConflict(
         const Conflict &conflict, unordered_map<size_t, Constraints> &constraints);
-
 int read_map_file(std::filesystem::path map_file_path, vector<vector<bool> >& ret_map);
 
 
@@ -452,6 +454,34 @@ struct tuple_equal {
     }
 };
 
+class Edge{
+
+public:
+    int from, to, cap;
+    Edge(int from, int to, int cap)
+    {
+        this->from = from;
+        this->to = to;
+        this->cap = cap;
+    }
+    bool operator < (const Edge& other) const {
+        return cap < other.cap;
+    }
+};
+
+
 State getState(shared_ptr<Path> sol, int t);
+
+void get_block_map(unordered_map<tuple<int, int, int>, int, tuple_hash, tuple_equal>& pointCheckMap,
+                   unordered_map<tuple<int, int>, int, tuple_hash, tuple_equal>& lastPointCheckMap,
+                   unordered_map<tuple<int, int, int, int, int>, int, tuple_hash, tuple_equal>& edgeCheckMap,
+                   const vector<shared_ptr<Path > >& out_solution,
+                   int agent_idx);
+int get_block_map(unordered_map<tuple<int, int, int>, int, tuple_hash, tuple_equal>& pointCheckMap,
+                   unordered_map<tuple<int, int, int>, int, tuple_hash, tuple_equal>& edgeCheckMap,
+                   const vector<shared_ptr<Path > >& out_solution);
 int high_focal_score_v2(const vector<shared_ptr<Path > >& out_solution, Conflict& result);
+int high_focal_score_v3(const vector<shared_ptr<Path > >& out_solution, Conflict& result, const vector<bool>& changed_agent, vector<vector<int>>& conflict_matrix);
+int high_focal_score_v4(const vector<shared_ptr<Path > >& out_solution, Conflict& result, const vector<bool>& changed_agent, vector<vector<int>>& conflict_matrix);
+bool check_ans_valid(vector<shared_ptr<Path > > out_solution);
 #endif //ITACBS_REMAKE_COMMON_HPP

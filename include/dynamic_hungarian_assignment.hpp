@@ -1,6 +1,3 @@
-//
-// Created by YIMIN TANG on 2022/10/18.
-//
 #ifndef DYNAMIC_HUNGARIAN_ASSIGNMENT_HPP
 #define DYNAMIC_HUNGARIAN_ASSIGNMENT_HPP
 
@@ -28,7 +25,7 @@ public:
         org_n = agent_num;
         org_m = goal_num;
         n = std::max(org_m, org_n);
-        W = vector<vector<long> >(n, vector<long>(n, 0));
+        W = vector<vector<long> >(org_n, vector<long>(org_m, 0));
         mateL = vector<int>(n, -1);
         mateR = vector<int>(n, -1);
         p = vector<int>(n);
@@ -39,6 +36,7 @@ public:
     }
 
     void addEdge(int u, int v, int w) {
+        if (u >= org_n) return ;
         W[u][v] = DHinf - w;
     }
 
@@ -86,8 +84,11 @@ public:
 
                 while (aug == false && j < n) {
                     if (mateL[i] != j) {
-                        if (lx[i] + ly[j] - W[i][j] < slack[j]) {
-                            slack[j] = lx[i] + ly[j] - W[i][j];
+                        int tmp_w;
+                        if (i >= org_n) tmp_w = 0;
+                            else tmp_w = W[i][j];
+                        if (lx[i] + ly[j] - tmp_w < slack[j]) {
+                            slack[j] = lx[i] + ly[j] - tmp_w;
                             p[j] = i;
                             if (slack[j] == 0) {
                                 if (mateR[j] == -1) {
@@ -203,7 +204,13 @@ public:
         create_cost_matrix(cost_matrix);
         for(int i=0;i<n;i++)
         {
-            for(int j=0;j<n;j++) lx[i] = std::max(lx[i], W[i][j]);
+            for(int j=0;j<n;j++)
+            {
+                long tmp_w;
+                if (i >= org_n) tmp_w = 0;
+                    else tmp_w = W[i][j];
+                lx[i] = std::max(lx[i], tmp_w);
+            }
             ly[i] = 0;
         }
         int64_t ans = solve_hungarian();
@@ -219,7 +226,14 @@ public:
     {
         create_cost_matrix(cost_matrix, u);
         mateR[ mateL[u] ] = -1; mateL[u] = -1;
-        lx[u] = -inf; for(int i=0;i<n;i++) lx[u] = std::max(lx[u], W[u][i]-ly[i]);
+        lx[u] = -inf;
+        for(int i=0;i<n;i++)
+        {
+            long tmp_w;
+            if (u >= org_n) tmp_w = 0;
+                else tmp_w = W[u][i];
+            lx[u] = std::max(lx[u], tmp_w-ly[i]);
+        }
         int64_t ans = solve_hungarian();
         for (int i = 0; i < org_n; i++) {
             int task_idx = mateL[i];
@@ -234,7 +248,14 @@ public:
     {
         create_cost_matrix(fmin_matrix, u);
         mateR[ mateL[u] ] = -1; mateL[u] = -1;
-        lx[u] = -inf; for(int i=0;i<n;i++) lx[u] = std::max(lx[u], W[u][i]-ly[i]);
+        lx[u] = -inf;
+        for(int i=0;i<n;i++)
+        {
+            long tmp_w;
+            if (u >= org_n) tmp_w = 0;
+                else tmp_w = W[u][i];
+            lx[u] = std::max(lx[u], tmp_w-ly[i]);
+        }
         int64_t ans = solve_hungarian();
         for (int i = 0; i < org_n; i++) {
             int task_idx = mateL[i];
