@@ -1,4 +1,4 @@
-# ITA-CBS2
+# ITA-CBS
 
 map_data: [data_download](https://drive.google.com/file/d/1NOI4AxlLeqFZKxPTLKaU5x70LJUBswk-/view?usp=sharing)
 
@@ -45,8 +45,28 @@ Reproduce Paper Results:
 ./run_test/single_exp2.sh build/CBSTA_remake 1 exp2_CBSTA.txt
 ```
 
+# ITA-ECBS
 
-Visualize:
+map_data: [data_download](https://drive.google.com/file/d/1qSGpVkGmnsI23DeuGRqj7CNO0hKfHXB-/view?usp=sharing)
+
+ITA-ECBS
+Build:
+
+```bash
+mkdir build
+cd build
+cmake ..
+cmake --build . --target ITA_ECBS_v0
+cmake --build . --target ITA_ECBS
+cmake --build . --target ECBSTA
+```
+
+Run:
+```bash
+./ITA_ECBS_v0 -i ../map_file/debug_data.yaml -o ../outputs/output.yaml
+```
+
+# Visualize:
 
 Old:
 ```bash
