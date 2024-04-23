@@ -82,4 +82,4 @@ python python/PlanViz/script/plan_viz.py --map  map_file/Boston_0_256.map --plan
 ```
 
 
-Thank @MinakoOikawa (twitter id) for providing the correct dynamic hungarian implementation.
+Thank [@MinakoOikawa](https://twitter.com/minakooikawa) for providing the correct dynamic hungarian implementation.
