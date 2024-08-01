@@ -83,3 +83,31 @@ python python/PlanViz/script/plan_viz.py --map  map_file/Boston_0_256.map --plan
 
 
 Thank [@MinakoOikawa](https://twitter.com/minakooikawa) for providing the correct dynamic hungarian implementation.
+
+
+# Papers
+
+```
+@INPROCEEDINGS{10416794,
+  author={Tang, Yimin and Ren, Zhongqiang and Li, Jiaoyang and Sycara, Katia},
+  booktitle={2023 International Symposium on Multi-Robot and Multi-Agent Systems (MRS)}, 
+  title={Solving Multi-Agent Target Assignment and Path Finding with a Single Constraint Tree}, 
+  year={2023},
+  volume={},
+  number={},
+  pages={8-14},
+  keywords={Scalability;Search problems;Planning;Faces;Multi-agent systems},
+  doi={10.1109/MRS60187.2023.10416794}}
+```
+
+```
+@inproceedings{tang2024ita,
+  title={ITA-ECBS: A Bounded-Suboptimal Algorithm for Combined Target-Assignment and Path-Finding Problem},
+  author={Tang, Yimin and Koenig, Sven and Li, Jiaoyang},
+  booktitle={Proceedings of the International Symposium on Combinatorial Search},
+  volume={17},
+  pages={134--142},
+  year={2024}
+}
+```
+
