@@ -18,15 +18,15 @@ set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 file(GLOB THIRD_PARTY "third_party/*.cpp" "third_party/*.h")
 
-add_executable(ITACBS_remake main_ITACBS.cpp include/common.hpp include/ITACBS/ITACBS.hpp include/ITACBS/ITACBS.cpp include/ITACBS/ITACBSNode.hpp include/ITACBS/ITACBSNode.cpp include/dynamic_hungarian_assignment.hpp include/common.cpp)
-target_link_libraries(ITACBS_remake
+add_executable(ITACBS main_ITACBS.cpp include/common.hpp include/ITACBS/ITACBS.hpp include/ITACBS/ITACBS.cpp include/ITACBS/ITACBSNode.hpp include/ITACBS/ITACBSNode.cpp include/dynamic_hungarian_assignment.hpp include/common.cpp)
+target_link_libraries(ITACBS
         ${Boost_LIBRARIES}
         yaml-cpp
         )
 
 
-add_executable(CBSTA_remake main_CBSTA.cpp include/common.hpp include/CBSTA/CBSTANode.hpp include/CBSTA/CBSTANode.cpp include/dynamic_hungarian_assignment.hpp include/CBSTA/CBSTA.cpp include/CBSTA/CBSTA.hpp include/CBSTA/TANode.cpp include/CBSTA/TANode.hpp include/common.cpp)
-target_link_libraries(CBSTA_remake
+add_executable(CBSTA main_CBSTA.cpp include/common.hpp include/CBSTA/CBSTANode.hpp include/CBSTA/CBSTANode.cpp include/dynamic_hungarian_assignment.hpp include/CBSTA/CBSTA.cpp include/CBSTA/CBSTA.hpp include/CBSTA/TANode.cpp include/CBSTA/TANode.hpp include/common.cpp)
+target_link_libraries(CBSTA
         ${Boost_LIBRARIES}
         yaml-cpp
         )

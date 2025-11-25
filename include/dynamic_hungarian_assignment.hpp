@@ -161,7 +161,7 @@ public:
                     if (cost_matrix[i][j] == nullptr) {
                         addEdge(i, j, DHinf);
                     } else {
-                        addEdge(i, j, cost_matrix[i][j]->back().gScore);
+                        addEdge(i, j, cost_matrix[i][j]->size());
                     }
                 }
         }

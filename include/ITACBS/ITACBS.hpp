@@ -14,14 +14,18 @@ public:
 
     bool solution_found;
     int diff_goal_n;
+    int diff_start_n;
     int agent_n;
     vector<State> start_states;
     unordered_set<Location> obstacles;
     vector<unordered_set<Location> > goals;
     unordered_map<Location, int> goal_to_idx;
     unordered_map<int, Location> idx_to_goal;
+    unordered_map<Location, int> start_to_idx;
+    unordered_map<int, Location> idx_to_start;
     vector<vector<int> > map2d_obstacle;
     unordered_map<int, vector<vector<int> > > prior_hmap;
+    unordered_map<int, vector<vector<int> > > prior_hmap_back;
     vector<vector<bool> > assignment_allow_map;
     unordered_set<State, boost::hash<State> > closedSet;
     vector<shared_ptr<Path > > out_solution;
@@ -35,11 +39,14 @@ public:
     ~ITACBS();
     ITACBS(int row_number, int col_number, unordered_set<Location>& obstacles,
            vector<unordered_set<Location> >& goals, vector<State>& startStates,
-           unordered_map<Location, int>& goal_to_idx, unordered_map<int, Location>& idx_to_goal);
+           unordered_map<Location, int>& goal_to_idx, unordered_map<int, Location>& idx_to_goal,
+        unordered_map<Location, int>& start_to_idx, unordered_map<int, Location>& idx_to_start);
     void clear();
     int solve();
+    int solve_with_back();
 //    vector<Constraints>* create_constraints_from_conflict(Conflict& conflict);
     int heuristic(int x1, int y1, Location goal_loc);
+    int heuristic_back(int x1, int y1, Location start_loc);
     bool searchNodeIsValid(shared_ptr<Constraints>& agent_constraint_set, const State& new_state, const State& org_state);
 
 
@@ -52,7 +59,18 @@ public:
 //    list<int> getNeighbors(int curr) const;
 //    inline bool validMove(int curr, int next) const;
 
-    shared_ptr<Path> findPath_a_star(shared_ptr<Constraints>&  agent_constraint_set, int agent_idx, int goal_loc_idx);
+    shared_ptr<Path> findPath_a_star(
+        shared_ptr<Constraints>&  agent_constraint_set,
+        int agent_idx, int goal_loc_idx);
+
+    shared_ptr<Path> findPath_a_star_with_back(
+        shared_ptr<Constraints>&  agent_constraint_set,
+        int agent_idx, int goal_loc_idx,
+        int start_loc_idx, State goal_reach);
+
+    shared_ptr<Path> findPath_with_back(
+        shared_ptr<Constraints>& agent_constraint_set,
+        int agent_idx, int goal_loc_idx);
 
     typedef typename boost::heap::d_ary_heap<shared_ptr<PathEntry>, boost::heap::arity<2>,
             boost::heap::mutable_<true>, boost::heap::compare<PathEntryCompare> >

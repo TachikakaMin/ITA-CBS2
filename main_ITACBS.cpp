@@ -12,6 +12,8 @@ unordered_set<Location> obstacles;
 vector<unordered_set<Location> > goals;
 unordered_map<Location, int> goal_to_idx;
 unordered_map<int, Location> idx_to_goal;
+unordered_map<Location, int> start_to_idx;
+unordered_map<int, Location> idx_to_start;
 vector<State> start_states;
 po::variables_map vm;
 int row_number,col_number;
@@ -74,9 +76,13 @@ int init_map(int argc, char** argv)
     }
 
     unordered_set<Location> all_goal_location_set;
+    unordered_set<Location> all_start_location_set;
 
     for (const auto &node: config["agents"]) {
         const auto &start = node["start"];
+        Location xx = Location(start[0].as<int>(), start[1].as<int>());
+        all_start_location_set.insert(xx);
+
         start_states.emplace_back(State(0, start[0].as<int>(), start[1].as<int>()));
         goals.resize(goals.size() + 1);
         for (const auto &goal: node["potentialGoals"]) {
@@ -94,6 +100,13 @@ int init_map(int argc, char** argv)
         cnt ++;
     }
 
+    cnt = 0;
+    for (const auto& location:all_start_location_set)
+    {
+        start_to_idx[location] = cnt;
+        idx_to_start[cnt] = location;
+        cnt ++;
+    }
 
     // sanity check: no identical start states
     unordered_set<State> all_start_states_set;
@@ -116,7 +129,9 @@ int main(int argc, char** argv) {
         return 0;
     }
     std::cout<< "Load Map Done" <<std::endl;
-    ITACBS itacbs(row_number, col_number, obstacles, goals, start_states, goal_to_idx, idx_to_goal);
+    ITACBS itacbs(row_number, col_number, obstacles, goals, 
+        start_states, goal_to_idx, idx_to_goal,
+    start_to_idx, idx_to_start);
 
     int runs = vm["restart"].as<int>();
     for (int i = 0; i < runs; i++) {
@@ -130,17 +145,6 @@ int main(int argc, char** argv) {
     std::ofstream out(outputFile);
     out << "statistics:" << std::endl;
     out << "  cost: " << itacbs.cost << std::endl;
-    out << "  TA_runtime: " << itacbs.ta_runtime << std::endl;
-    out << "  newnode_runtime: " << itacbs.newnode_time << std::endl;
-    out << "  firstconflict_runtime: " << itacbs.firstconflict_time << std::endl;
-    out << "  runtime: " << itacbs.total_runtime << std::endl;
-    out << "  lowlevel_search_time: " << itacbs.lowlevel_search_time << std::endl;
-    out << "  total_lowlevel_node: " << itacbs.cbsnode_num << std::endl;
-    out << "  lowLevelExpanded: " << itacbs.lowLevelExpanded << std::endl;
-    out << "  numTaskAssignments: " << itacbs.num_ta << std::endl;
-    out << "  numTaskAssignmentChanged: " << itacbs.num_ta_change << std::endl;
-
-    out << "schedule:" << std::endl;
     for (size_t a = 0; a < itacbs.out_solution.size(); ++a) {
         out << "  agent" << a << ":" << std::endl;
         for (const auto &state: *(itacbs.out_solution[a])) {
