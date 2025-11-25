@@ -347,69 +347,6 @@ shared_ptr<Path> ITACBS::findPath_with_back(shared_ptr<Constraints>& agent_const
     return merged;
 }
 
-int ITACBS::solve_with_back(vector<int>& agent_if_return) {
-
-    this->agent_if_return = agent_if_return;
-
-
-    int cnt_idx = 0;
-    shared_ptr<ITACBSNode> start_node(new ITACBSNode(cnt_idx)); cnt_idx++;
-
-
-    start_node->create_cost_matrix(this);
-    {
-        bool b = start_node->get_first_assignment(this);
-        if (!b) return false;
-    }
-    typename boost::heap::d_ary_heap<shared_ptr<ITACBSNode>,
-                boost::heap::mutable_<true>,
-                boost::heap::arity<2>,
-                boost::heap::compare<ITA_CBSNodePtrCmp> >
-            open;
-
-    open.push(start_node);
-
-    while (!open.empty())
-    {
-        shared_ptr<ITACBSNode> cur_node = open.top(); open.pop();
-        Conflict conflict;
-        bool done = !cur_node->get_first_conflict(conflict);
-
-        if (done)
-        {
-            std::cout << "done; cost: " << cur_node->cost << std::endl;
-//            for (int i=0;i<agent_n;i++) printf("%d->(%d, %d)\n", i, idx_to_goal[cur_node->out_TA_solution[i]].x, idx_to_goal[cur_node->out_TA_solution[i]].y);
-            this->out_solution = cur_node->out_solution;
-            this->cost = cur_node->cost;
-            this->solution_found = true;
-            return true;
-        }
-
-        unordered_map<size_t, Constraints> tmp;
-        createConstraintsFromConflict(conflict, tmp);
-        unsigned short cur_i = 0;
-        for (auto &[key, value]: tmp)
-        {
-            shared_ptr<ITACBSNode> new_node;
-            cnt_idx++;
-            if (cur_i == 1) {new_node = cur_node; new_node->idx = cnt_idx;}
-                else new_node = shared_ptr<ITACBSNode>(new ITACBSNode(cur_node, cnt_idx));
-
-            assert(!new_node->constraint_sets[key]->overlap(value));
-            new_node->constraint_sets[key] = shared_ptr<Constraints>(new Constraints(*(new_node->constraint_sets[key])));
-            new_node->constraint_sets[key]->add(value);
-            cur_i ++;
-            bool b = new_node->update_cost_matrix(this, key, value);
-            if (b) {
-                this->num_ta_change += new_node->get_next_assignment(key);
-            }
-            open.push(new_node);
-        }
-
-    }
-    return false;
-
-}
 
 int ITACBS::solve() {
     this->cbsnode_num ++;
