@@ -10,8 +10,10 @@ namespace po = boost::program_options;
 
 unordered_set<Location> obstacles;
 vector<unordered_set<Location> > goals;
+vector<unordered_set<Location> > dropoffGoals;
 unordered_map<Location, int> goal_to_idx;
 unordered_map<int, Location> idx_to_goal;
+vector<bool> agent_status;
 unordered_map<Location, int> start_to_idx;
 unordered_map<int, Location> idx_to_start;
 vector<State> start_states;
@@ -83,11 +85,21 @@ int init_map(int argc, char** argv)
         Location xx = Location(start[0].as<int>(), start[1].as<int>());
         all_start_location_set.insert(xx);
 
+        const auto &isDroppingoff = node["isDroppingoff"];
+        agent_status.push_back(isDroppingoff.as<bool>());
+
         start_states.emplace_back(State(0, start[0].as<int>(), start[1].as<int>()));
         goals.resize(goals.size() + 1);
         for (const auto &goal: node["potentialGoals"]) {
             Location x = Location(goal[0].as<int>(), goal[1].as<int>());
             goals.back().emplace(x);
+            all_goal_location_set.insert(x);
+        }
+
+        dropoffGoals.resize(dropoffGoals.size() + 1);
+        for (const auto &goal: node["potentialDropoffGoals"]) {
+            Location x = Location(goal[0].as<int>(), goal[1].as<int>());
+            dropoffGoals.back().emplace(x);
             all_goal_location_set.insert(x);
         }
     }
@@ -129,15 +141,17 @@ int main(int argc, char** argv) {
         return 0;
     }
     std::cout<< "Load Map Done" <<std::endl;
-    ITACBS itacbs(row_number, col_number, obstacles, goals, 
-        start_states, goal_to_idx, idx_to_goal,
-    start_to_idx, idx_to_start);
+    ITACBS itacbs(row_number, col_number, obstacles,
+        goals, dropoffGoals, start_states, agent_status,
+        goal_to_idx, idx_to_goal,
+        start_to_idx, idx_to_start
+    );
 
     int runs = vm["restart"].as<int>();
     for (int i = 0; i < runs; i++) {
         itacbs.clear();
         itacbs.total_timer.reset();
-        itacbs.solve();
+        itacbs.solve_with_back();
         itacbs.total_timer.stop();
         itacbs.total_runtime = itacbs.total_timer.elapsedSeconds();
         if (itacbs.solution_found) break;
@@ -145,6 +159,8 @@ int main(int argc, char** argv) {
     std::ofstream out(outputFile);
     out << "statistics:" << std::endl;
     out << "  cost: " << itacbs.cost << std::endl;
+    out << "  teamSize: " << itacbs.out_solution.size() << std::endl;
+    out << "schedule: " << std::endl;
     for (size_t a = 0; a < itacbs.out_solution.size(); ++a) {
         out << "  agent" << a << ":" << std::endl;
         for (const auto &state: *(itacbs.out_solution[a])) {

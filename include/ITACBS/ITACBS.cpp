@@ -30,19 +30,22 @@ public:
 
 
 ITACBS::ITACBS(int row_number, int col_number, unordered_set<Location>& obstacles,
-               vector<unordered_set<Location> >& goals, vector<State>& start_states,
-               unordered_map<Location, int>& goal_to_idx, unordered_map<int, Location>& idx_to_goal,
-               unordered_map<Location, int>& start_to_idx, unordered_map<int, Location>& idx_to_start) {
+           vector<unordered_set<Location> >& goals, vector<unordered_set<Location> >& dropoffGoals,
+           vector<State>& start_states, vector<bool>& agent_status,
+           unordered_map<Location, int>& goal_to_idx, unordered_map<int, Location>& idx_to_goal,
+           unordered_map<Location, int>& start_to_idx, unordered_map<int, Location>& idx_to_start) {
     this->row_number = row_number;
     this->col_number = col_number;
     this->map_size = row_number * col_number;
     this->start_states = start_states;
     this->obstacles = obstacles;
     this->goals = goals;
+    this->dropoffGoals = dropoffGoals;
     this->goal_to_idx = goal_to_idx;
     this->idx_to_goal = idx_to_goal;
     this->start_to_idx = start_to_idx;
     this->idx_to_start = idx_to_start;
+    this->agent_status = agent_status;
 
     this->ta_runtime = 0;
     this->total_runtime = 0;
@@ -62,15 +65,30 @@ ITACBS::ITACBS(int row_number, int col_number, unordered_set<Location>& obstacle
     this->diff_start_n = this->start_to_idx.size();
     this->agent_n = this->start_states.size();
 
-    this->assignment_allow_map.resize(this->agent_n, vector<bool>(this->diff_goal_n, false));
+    this->assignment_allow_map.resize(this->agent_n,
+        vector<bool>(this->diff_goal_n, false)
+        );
     for (int i=0; i<this->agent_n; i++)
     {
-        const auto& agent_i_goal = this->goals[i];
-        for (const auto& location: agent_i_goal)
+        if (this->agent_status[i] == 0)
         {
-            int idx = this->goal_to_idx[location];
-            this->assignment_allow_map[i][idx] = true;
+            const auto& agent_i_goal = this->goals[i];
+            for (const auto& location: agent_i_goal)
+            {
+                int idx = this->goal_to_idx[location];
+                this->assignment_allow_map[i][idx] = true;
+            }
         }
+        else
+        {
+            const auto& agent_i_dropoffgoal = this->dropoffGoals[i];
+            for (const auto& location: agent_i_dropoffgoal)
+            {
+                int idx = this->goal_to_idx[location];
+                this->assignment_allow_map[i][idx] = true;
+            }
+        }
+
     }
     printf("Init shortest path\n");
     for (int i=0;i<this->diff_goal_n;i++)
@@ -100,33 +118,6 @@ ITACBS::ITACBS(int row_number, int col_number, unordered_set<Location>& obstacle
         this->prior_hmap[i] = std::move(prior_map);
     }
 
-    printf("Init back shortest path\n");
-    for (int i=0;i<this->diff_start_n;i++)
-    {
-        vector<vector<int> > prior_map_back;
-        prior_map_back.resize(this->row_number, vector<int>(this->col_number, INF7f));
-        Location start_loc = idx_to_start[i];
-        prior_map_back[start_loc.x][start_loc.y] = 0;
-        std::priority_queue<pair<int, Location>, vector<pair<int, Location> >, PairCompare > pq;
-        pq.push(make_pair(0, start_loc));
-        while (!pq.empty())
-        {
-            pair<int, Location> x = pq.top(); pq.pop();
-            int c = x.first;
-            Location cur_loc = x.second;
-
-            for (int k = 0; k<4; k++)
-            {
-                Location new_loc(cur_loc.x + dx[k], cur_loc.y + dy[k]);
-                if (new_loc.x < 0 || new_loc.x >= this->row_number || new_loc.y < 0 || new_loc.y >= this->col_number) continue;
-                if (this->map2d_obstacle[new_loc.x][new_loc.y]) continue;
-                if (c + 1 >= prior_map_back[new_loc.x][new_loc.y]) continue;
-                prior_map_back[new_loc.x][new_loc.y] = c + 1;
-                pq.push(make_pair(c+1, new_loc));
-            }
-        }
-        this->prior_hmap_back[i] = std::move(prior_map_back);
-    }
     printf("Init Done\n");
 }
 
@@ -138,10 +129,6 @@ int ITACBS::heuristic(int x1, int y1, Location goal_loc) {
     return this->prior_hmap[idx][x1][y1];
 }
 
-int ITACBS::heuristic_back(int x1, int y1, Location start_loc) {
-    int idx = this->goal_to_idx[start_loc];
-    return this->prior_hmap_back[idx][x1][y1];
-}
 
 bool ITACBS::searchNodeIsValid(shared_ptr<Constraints>&  agent_constraint_set, const State& new_state, const State& org_state) {
 //    cout<<(state.x) <<" "<< (this->row_number) <<" "<< (state.y) <<" "<< (this->col_number) <<endl;
@@ -159,7 +146,6 @@ bool ITACBS::searchNodeIsValid(shared_ptr<Constraints>&  agent_constraint_set, c
 shared_ptr<Path> ITACBS::findPath_a_star(shared_ptr<Constraints>& agent_constraint_set, int agent_idx, int goal_loc_idx)
 {
     int search_max = 1e5;
-    int m_lastGoalConstraint = -1;
     closedSet.clear();
     unordered_map<State, PathEntryHandle , boost::hash<State> > stateToHeap;
     openSet_t openSet;
@@ -169,11 +155,6 @@ shared_ptr<Path> ITACBS::findPath_a_star(shared_ptr<Constraints>& agent_constrai
 
     Location goal_location = this->idx_to_goal[goal_loc_idx];
 
-    for (const auto &vc: agent_constraint_set->vertexConstraints) {
-        if (vc.x == goal_location.x && vc.y == goal_location.y) {
-            m_lastGoalConstraint = std::max(m_lastGoalConstraint, vc.time);
-        }
-    }
 
     shared_ptr<PathEntry> startNode(new PathEntry(start_state,
                                                     this->heuristic(start_state.x, start_state.y, goal_location),
@@ -188,7 +169,7 @@ shared_ptr<Path> ITACBS::findPath_a_star(shared_ptr<Constraints>& agent_constrai
         search_max--;
         shared_ptr<PathEntry> current = openSet.top();
 
-        if (current->state.x == goal_location.x && current->state.y == goal_location.y && current->state.time > m_lastGoalConstraint)
+        if (current->state.x == goal_location.x && current->state.y == goal_location.y)
         {
             shared_ptr<Path> path(new Path);
             while (current != nullptr) {
@@ -234,7 +215,7 @@ shared_ptr<Path> ITACBS::findPath_a_star(shared_ptr<Constraints>& agent_constrai
 shared_ptr<Path> ITACBS::findPath_a_star_with_back(
         shared_ptr<Constraints>&  agent_constraint_set,
         int agent_idx, int goal_loc_idx,
-        int start_loc_idx, State goal_reach)
+        bool if_back, State goal_reach)
 {
 
 
@@ -245,18 +226,16 @@ shared_ptr<Path> ITACBS::findPath_a_star_with_back(
 
     State start_state;
     Location goal_location;
-    if (start_loc_idx == -1) {
+    if (if_back == 0) {
         start_state = this->start_states[agent_idx];
         goal_location = this->idx_to_goal[goal_loc_idx];
     }
     else {
         start_state = goal_reach;
-        goal_location = this->idx_to_start[start_loc_idx];
+        goal_location = this->idx_to_goal[goal_loc_idx];
     }
 
-    int fScore = (start_loc_idx == -1) ?
-        this->heuristic(start_state.x, start_state.y, goal_location) :
-        this->heuristic_back(start_state.x, start_state.y, goal_location);
+    int fScore = this->heuristic(start_state.x, start_state.y, goal_location);
 
     shared_ptr<PathEntry> startNode(new PathEntry(start_state,
                                                     fScore,
@@ -271,8 +250,21 @@ shared_ptr<Path> ITACBS::findPath_a_star_with_back(
         search_max--;
         shared_ptr<PathEntry> current = openSet.top();
 
+        bool goal_check_pass = 0;
         if (current->state.x == goal_location.x && current->state.y == goal_location.y)
         {
+            goal_check_pass = 1;
+            for (const auto &vc: agent_constraint_set->vertexConstraints) {
+                if (vc.x == current->state.x && vc.y == current->state.y && vc.time == current->state.time) {
+                    goal_check_pass = 0;
+                }
+            }
+        }
+
+
+        if (goal_check_pass)
+        {
+
             shared_ptr<Path> path(new Path);
             while (current != nullptr) {
                 path->push_back(PathEntry(current->state, current->fScore, current->gScore, nullptr));
@@ -292,9 +284,7 @@ shared_ptr<Path> ITACBS::findPath_a_star_with_back(
             int tentative_gScore = current->gScore + 1;
             auto iter = stateToHeap.find(new_state);
             if (iter == stateToHeap.end()) {  // Discover a new node
-                fScore = (start_loc_idx == -1) ?
-                        this->heuristic(new_state.x, new_state.y, goal_location) :
-                        this->heuristic_back(new_state.x, new_state.y, goal_location);
+                fScore = this->heuristic(new_state.x, new_state.y, goal_location);
                 fScore += tentative_gScore;
 
                 shared_ptr<PathEntry> nextNode(new PathEntry(new_state, fScore,
@@ -320,17 +310,28 @@ shared_ptr<Path> ITACBS::findPath_a_star_with_back(
 
 shared_ptr<Path> ITACBS::findPath_with_back(shared_ptr<Constraints>& agent_constraint_set, int agent_idx, int goal_loc_idx) {
     State goal_reach;
-    shared_ptr<Path> path_start_to_goal = this->findPath_a_star_with_back( agent_constraint_set,
+    shared_ptr<Path> path_start_to_goal = this->findPath_a_star_with_back(agent_constraint_set,
                                                                             agent_idx, goal_loc_idx,
-                                                                            -1, goal_reach);
+                                                                            FALSE, goal_reach);
     if (path_start_to_goal == nullptr) return nullptr;
 
     State start_state = this->start_states[agent_idx];
     int start_loc_idx = this->start_to_idx[Location(start_state.x, start_state.y)];
     goal_reach = path_start_to_goal->back().state;
-    shared_ptr<Path> path_goal_to_start = this->findPath_a_star_with_back( agent_constraint_set,
-                                                                            agent_idx, goal_loc_idx,
-                                                                            start_loc_idx, goal_reach);
+
+    shared_ptr<Path> path_goal_to_start = nullptr;
+    for (auto dropOffPos: this->dropoffGoals[agent_idx])
+    {
+        int dropOffIdx = this->goal_to_idx[dropOffPos];
+        shared_ptr<Path> tmp_path_goal_to_start = this->findPath_a_star_with_back( agent_constraint_set,
+                                                                            agent_idx, dropOffIdx,
+                                                                            TRUE, goal_reach);
+        if (tmp_path_goal_to_start == nullptr) continue;
+        if (path_goal_to_start == nullptr ||
+            path_goal_to_start->size() > tmp_path_goal_to_start->size())
+                path_goal_to_start = tmp_path_goal_to_start;
+    }
+
     if (path_goal_to_start == nullptr) return nullptr;
 
     shared_ptr<Path> merged(new Path());
@@ -348,15 +349,11 @@ shared_ptr<Path> ITACBS::findPath_with_back(shared_ptr<Constraints>& agent_const
 }
 
 
-int ITACBS::solve() {
-    this->cbsnode_num ++;
-    this->newnode_timer.reset();
+int ITACBS::solve_with_back() {
     int cnt_idx = 0;
     shared_ptr<ITACBSNode> start_node(new ITACBSNode(cnt_idx)); cnt_idx++;
-    this->newnode_timer.stop();
-    this->newnode_time += this->newnode_timer.elapsedSeconds();
 
-    start_node->create_cost_matrix(this);
+    start_node->create_cost_matrix_with_back(this);
     {
         bool b = start_node->get_first_assignment(this);
         if (!b) return false;
@@ -373,10 +370,7 @@ int ITACBS::solve() {
     {
         shared_ptr<ITACBSNode> cur_node = open.top(); open.pop();
         Conflict conflict;
-        this->firstconflict_timer.reset();
         bool done = !cur_node->get_first_conflict(conflict);
-        this->firstconflict_timer.stop();
-        this->firstconflict_time += this->firstconflict_timer.elapsedSeconds();
 
         if (done)
         {
@@ -395,29 +389,22 @@ int ITACBS::solve() {
         {
             shared_ptr<ITACBSNode> new_node;
             cnt_idx++;
-            this->newnode_timer.reset();
             if (cur_i == 1) {new_node = cur_node; new_node->idx = cnt_idx;}
                 else new_node = shared_ptr<ITACBSNode>(new ITACBSNode(cur_node, cnt_idx));
-            this->newnode_timer.stop();
-            this->newnode_time += this->newnode_timer.elapsedSeconds();
 
             assert(!new_node->constraint_sets[key]->overlap(value));
             new_node->constraint_sets[key] = shared_ptr<Constraints>(new Constraints(*(new_node->constraint_sets[key])));
             new_node->constraint_sets[key]->add(value);
             cur_i ++;
-            bool b = new_node->update_cost_matrix(this, key, value);
+            bool b = new_node->update_cost_matrix_with_back(this, key, value);
             if (b) {
-                this->num_ta ++;
-                this->ta_timer.reset();
                 this->num_ta_change += new_node->get_next_assignment(key);
-                this->ta_timer.stop();
-                this->ta_runtime += this->ta_timer.elapsedSeconds();
             }
-            this->cbsnode_num ++;
             open.push(new_node);
         }
 
     }
     return false;
 }
+
 

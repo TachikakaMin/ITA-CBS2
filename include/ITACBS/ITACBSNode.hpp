@@ -17,9 +17,11 @@ public:
     explicit ITACBSNode(shared_ptr<ITACBSNode> curnode, const int& id);
 
     void create_cost_matrix(ITACBS* pInstance);
+    void create_cost_matrix_with_back(ITACBS* pInstance);
     bool get_first_assignment(ITACBS* pInstance);
     bool get_first_conflict(Conflict& conflict);
     bool update_cost_matrix(ITACBS* pInstance, int agent_id, Constraints& new_constraint);
+    bool update_cost_matrix_with_back(ITACBS* pInstance, int agent_id, Constraints& new_constraint);
     bool get_next_assignment(int agent_id);
 
     int cost;
