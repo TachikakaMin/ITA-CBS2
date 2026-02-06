@@ -3,7 +3,7 @@ cmake-build-debug
 build/*
 python/PlanViz/*
 python/PlanViz
-tmp_*
+tmp*
 outputs/*
 .idea/*
 map_file/*
