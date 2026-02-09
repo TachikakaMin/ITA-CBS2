@@ -19,22 +19,22 @@ ITACBSNode::ITACBSNode(const int&  id){
     idx = id;
 }
 
-void ITACBSNode::create_cost_matrix(ITACBS* pInstance) {
-    constraint_sets.resize(pInstance->agent_n, shared_ptr<Constraints>(nullptr));
-    cost_matrix.resize(pInstance->agent_n, vector<shared_ptr<Path> >(pInstance->diff_goal_n, shared_ptr<Path >(nullptr)));
-    for (int i=0; i< pInstance->agent_n;i++)
-    {
-        constraint_sets[i] = shared_ptr<Constraints>(new Constraints);
-        for (int j=0;j< pInstance->diff_goal_n; j++)
-        {
-            if (!pInstance->assignment_allow_map[i][j]) continue;
-            pInstance->lowlevel_search_timer.reset();
-            cost_matrix[i][j] = pInstance->findPath_with_back(this->constraint_sets[i], i, j);
-            pInstance->lowlevel_search_timer.stop();
-            pInstance->lowlevel_search_time += pInstance->lowlevel_search_timer.elapsedSeconds();
-        }
-    }
-}
+// void ITACBSNode::create_cost_matrix(ITACBS* pInstance) {
+//     constraint_sets.resize(pInstance->agent_n, shared_ptr<Constraints>(nullptr));
+//     cost_matrix.resize(pInstance->agent_n, vector<shared_ptr<Path> >(pInstance->diff_goal_n, shared_ptr<Path >(nullptr)));
+//     for (int i=0; i< pInstance->agent_n;i++)
+//     {
+//         constraint_sets[i] = shared_ptr<Constraints>(new Constraints);
+//         for (int j=0;j< pInstance->diff_goal_n; j++)
+//         {
+//             if (!pInstance->assignment_allow_map[i][j]) continue;
+//             pInstance->lowlevel_search_timer.reset();
+//             cost_matrix[i][j] = pInstance->findPath_with_back(this->constraint_sets[i], i, j);
+//             pInstance->lowlevel_search_timer.stop();
+//             pInstance->lowlevel_search_time += pInstance->lowlevel_search_timer.elapsedSeconds();
+//         }
+//     }
+// }
 
 
 void ITACBSNode::create_cost_matrix_with_back(ITACBS* pInstance) {
@@ -60,7 +60,11 @@ void ITACBSNode::create_cost_matrix_with_back(ITACBS* pInstance) {
 
 bool ITACBSNode::get_first_assignment(ITACBS* pInstance) {
     this->new_assignment.initHungarian(pInstance->agent_n, pInstance->diff_goal_n);
-    this->cost = this->new_assignment.firstSolution(this->cost_matrix, this->out_TA_solution);
+    this->cost = this->new_assignment.firstSolution(
+        this->cost_matrix, this->out_TA_solution,
+        pInstance->idx_to_ore, pInstance->agent_status, pInstance->agent_past_path_cost,
+        pInstance->agent_current_hold_ore, pInstance->agent_capacity
+    );
     if (this->cost > BAD_TA_ANS) return 0;
     return this->cost;
 }
@@ -194,14 +198,17 @@ bool ITACBSNode::update_cost_matrix_with_back(ITACBS* pInstance, int agent_id, C
     return b;
 }
 
-bool ITACBSNode::get_next_assignment(int agent_id) {
+bool ITACBSNode::get_next_assignment(ITACBS* pInstance, int agent_id) {
     unordered_map<int, int> preTAsol = this->out_TA_solution;
-    this->cost = this->new_assignment.incrementalSolutionX(this->cost_matrix, this->out_TA_solution, agent_id);
+    this->cost = this->new_assignment.incrementalSolutionX(
+        this->cost_matrix, this->out_TA_solution,
+        pInstance->idx_to_ore, pInstance->agent_status, pInstance->agent_past_path_cost,
+        pInstance->agent_current_hold_ore, pInstance->agent_capacity,
+        agent_id
+    );
     int n = this->cost_matrix.size();
     bool ta_changed = 0;
     for (int i=0;i<n;i++)
         if (preTAsol[i] != this->out_TA_solution[i]) {ta_changed = 1; break;}
     return ta_changed;
 }
-
-

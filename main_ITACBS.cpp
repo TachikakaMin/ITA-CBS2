@@ -13,7 +13,11 @@ vector<unordered_set<Location> > goals;
 vector<unordered_set<Location> > dropoffGoals;
 unordered_map<Location, int> goal_to_idx;
 unordered_map<int, Location> idx_to_goal;
+unordered_map<int, int> idx_to_ore;
 vector<bool> agent_status;
+vector<int> agent_past_path_cost;
+vector<int> agent_current_hold_ore;
+vector<int> agent_capacity;
 unordered_map<Location, int> start_to_idx;
 unordered_map<int, Location> idx_to_start;
 vector<State> start_states;
@@ -51,19 +55,25 @@ int init_map(int argc, char** argv)
     }
 
     YAML::Node config = YAML::LoadFile(inputFile);
+    YAML::Node mapinfo = config["mapinfo"] ? config["mapinfo"] : config;
 
-    if (config["map"].IsMap()) {
-        const auto &dim = config["map"]["dimensions"];
+    if (!mapinfo["map"]) {
+        std::cerr << "Missing map/mapinfo.map in input file: " << inputFile << std::endl;
+        return -1;
+    }
+
+    if (mapinfo["map"].IsMap()) {
+        const auto &dim = mapinfo["map"]["dimensions"];
         row_number = dim[0].as<int>();
         col_number = dim[1].as<int>();
 
 
-        for (const auto &node: config["map"]["obstacles"]) {
+        for (const auto &node: mapinfo["map"]["obstacles"]) {
             obstacles.insert(Location(node[0].as<int>(), node[1].as<int>()));
         }
     }
     else {
-        const auto& file_name = config["map"].as<string>();
+        const auto& file_name = mapinfo["map"].as<string>();
         std::filesystem::path fullPath(inputFile);
         std::filesystem::path folderPath = fullPath.parent_path();
         std::filesystem::path map_file_path = folderPath / file_name;
@@ -79,38 +89,96 @@ int init_map(int argc, char** argv)
 
     unordered_set<Location> all_goal_location_set;
     unordered_set<Location> all_start_location_set;
+    vector<Location> indexed_dropoff_goals;
+
+    vector<int> ore_values;
+    for (const auto &goal: mapinfo["potentialGoalsOre"])
+    {
+        ore_values.push_back(goal.as<int>());
+    }
+
+    int cnt = 0;
+    for (const auto &goal: mapinfo["potentialGoals"])
+    {
+        Location x = Location(goal[0].as<int>(), goal[1].as<int>());
+        if (goal_to_idx.find(x) == goal_to_idx.end()) {
+            int idx = static_cast<int>(goal_to_idx.size());
+            goal_to_idx[x] = idx;
+            idx_to_goal[idx] = x;
+        }
+        int idx = goal_to_idx[x];
+        int ore = 0;
+        if (cnt < static_cast<int>(ore_values.size())) ore = ore_values[cnt];
+        idx_to_ore[idx] = ore;
+        cnt++;
+    }
+
+    for (const auto &goal: mapinfo["potentialDropoffGoals"])
+    {
+        Location x = Location(goal[0].as<int>(), goal[1].as<int>());
+        indexed_dropoff_goals.push_back(x);
+        if (goal_to_idx.find(x) == goal_to_idx.end()) {
+            int idx = static_cast<int>(goal_to_idx.size());
+            goal_to_idx[x] = idx;
+            idx_to_goal[idx] = x;
+            idx_to_ore[idx] = 0;
+        }
+    }
 
     for (const auto &node: config["agents"]) {
         const auto &start = node["start"];
         Location xx = Location(start[0].as<int>(), start[1].as<int>());
         all_start_location_set.insert(xx);
 
-        const auto &isDroppingoff = node["isDroppingoff"];
-        agent_status.push_back(isDroppingoff.as<bool>());
+        if (node["isDroppingoff"])
+            agent_status.push_back(node["isDroppingoff"].as<bool>());
+        else
+            agent_status.push_back(false);
+
+        if (node["pastPathCost"])
+            agent_past_path_cost.push_back(node["pastPathCost"].as<int>());
+        else
+            agent_past_path_cost.push_back(0);
+
+        if (node["currentHoldOre"])
+            agent_current_hold_ore.push_back(node["currentHoldOre"].as<int>());
+        else
+            agent_current_hold_ore.push_back(0);
+
+        if (node["capacity"])
+            agent_capacity.push_back(node["capacity"].as<int>());
+        else
+            agent_capacity.push_back(0);
 
         start_states.emplace_back(State(0, start[0].as<int>(), start[1].as<int>()));
         goals.resize(goals.size() + 1);
         for (const auto &goal: node["potentialGoals"]) {
-            Location x = Location(goal[0].as<int>(), goal[1].as<int>());
-            goals.back().emplace(x);
-            all_goal_location_set.insert(x);
+            int idx = goal.as<int>();
+            if (idx_to_goal.find(idx) == idx_to_goal.end()) {
+                std::cerr << "Invalid ore goal index " << idx << " in input file: " << inputFile << std::endl;
+                return -1;
+            }
+            goals.back().emplace(idx_to_goal[idx]);
         }
 
         dropoffGoals.resize(dropoffGoals.size() + 1);
         for (const auto &goal: node["potentialDropoffGoals"]) {
-            Location x = Location(goal[0].as<int>(), goal[1].as<int>());
+            Location x;
+            if (goal.IsScalar()) {
+                int idx = goal.as<int>();
+                if (idx < 0 || idx >= static_cast<int>(indexed_dropoff_goals.size())) {
+                    std::cerr << "Invalid dropoff goal index " << idx << " in input file: " << inputFile << std::endl;
+                    return -1;
+                }
+                x = indexed_dropoff_goals[idx];
+            } else {
+                x = Location(goal[0].as<int>(), goal[1].as<int>());
+            }
             dropoffGoals.back().emplace(x);
             all_goal_location_set.insert(x);
         }
     }
 
-    int cnt = 0;
-    for (const auto& location:all_goal_location_set)
-    {
-        goal_to_idx[location] = cnt;
-        idx_to_goal[cnt] = location;
-        cnt ++;
-    }
 
     cnt = 0;
     for (const auto& location:all_start_location_set)
@@ -143,7 +211,8 @@ int main(int argc, char** argv) {
     std::cout<< "Load Map Done" <<std::endl;
     ITACBS itacbs(row_number, col_number, obstacles,
         goals, dropoffGoals, start_states, agent_status,
-        goal_to_idx, idx_to_goal,
+        agent_past_path_cost, agent_current_hold_ore, agent_capacity,
+        goal_to_idx, idx_to_goal, idx_to_ore,
         start_to_idx, idx_to_start
     );
 

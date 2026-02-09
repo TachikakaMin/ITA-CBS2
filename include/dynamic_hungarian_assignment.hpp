@@ -17,6 +17,7 @@ public:
     vector<bool> m;
     long inf = std::numeric_limits<long>::max();
     long DHinf = 1e9;
+    long SCORE_SCALE = 1000;
 
     DynamicHungarianAssignment(){}
 
@@ -35,9 +36,46 @@ public:
         m = vector<bool>(n);
     }
 
-    void addEdge(int u, int v, int w) {
+    void addEdge(int u, int v, long w) {
         if (u >= org_n) return ;
         W[u][v] = DHinf - w;
+    }
+
+    long compute_assignment_cost(const vector<vector<shared_ptr<Path > > >& cost_matrix,
+                                 int agent_id,
+                                 int goal_id,
+                                 const unordered_map<int, int>& idx_to_ore,
+                                 const vector<bool>& agent_status,
+                                 const vector<int>& agent_past_path_cost,
+                                 const vector<int>& agent_current_hold_ore,
+                                 const vector<int>& agent_capacity) const {
+        if (cost_matrix[agent_id][goal_id] == nullptr) return DHinf;
+
+        long path_cost = cost_matrix[agent_id][goal_id]->back().gScore;
+        long past_cost = (agent_id < static_cast<int>(agent_past_path_cost.size()))
+            ? std::max(0, agent_past_path_cost[agent_id]) : 0;
+        long denominator = path_cost + past_cost;
+        if (denominator <= 0) denominator = 1;
+
+        long numerator = 0;
+        bool is_dropoff = (agent_id < static_cast<int>(agent_status.size())) && agent_status[agent_id];
+        if (is_dropoff) {
+            numerator = (agent_id < static_cast<int>(agent_current_hold_ore.size()))
+                ? std::max(0, agent_current_hold_ore[agent_id]) : 0;
+        } else {
+            long ore_left = 0;
+            auto it = idx_to_ore.find(goal_id);
+            if (it != idx_to_ore.end()) ore_left = std::max(0, it->second);
+            long capacity = (agent_id < static_cast<int>(agent_capacity.size()))
+                ? std::max(0, agent_capacity[agent_id]) : 0;
+            numerator = std::min(ore_left, capacity);
+        }
+
+        if (numerator <= 0) return DHinf;
+
+        long score = (numerator * SCORE_SCALE) / denominator;
+        if (score <= 0) score = 1;
+        return -score;
     }
 
     void augment(int j) {
@@ -151,25 +189,34 @@ public:
     }
 
 
-    void create_cost_matrix(const vector<vector<shared_ptr<Path > > >& cost_matrix, int u = -1)
+    void create_cost_matrix(const vector<vector<shared_ptr<Path > > >& cost_matrix,
+                            const unordered_map<int, int>& idx_to_ore,
+                            const vector<bool>& agent_status,
+                            const vector<int>& agent_past_path_cost,
+                            const vector<int>& agent_current_hold_ore,
+                            const vector<int>& agent_capacity,
+                            int u = -1)
     {
         int n = cost_matrix.size();
         int m = cost_matrix[0].size();
         if (u==-1) {
             for (int i = 0; i < n; i++)
                 for (int j = 0; j < m; j++) {
-                    if (cost_matrix[i][j] == nullptr) {
-                        addEdge(i, j, DHinf);
-                    } else {
-                        addEdge(i, j, cost_matrix[i][j]->size());
-                    }
+                    long weight = compute_assignment_cost(
+                        cost_matrix, i, j, idx_to_ore, agent_status,
+                        agent_past_path_cost, agent_current_hold_ore, agent_capacity
+                    );
+                    addEdge(i, j, weight);
                 }
         }
         else {
             for (int j=0;j<m; j++)
             {
-                if (cost_matrix[u][j] == nullptr) addEdge(u, j, DHinf);
-                    else addEdge(u, j, cost_matrix[u][j]->back().gScore);
+                long weight = compute_assignment_cost(
+                    cost_matrix, u, j, idx_to_ore, agent_status,
+                    agent_past_path_cost, agent_current_hold_ore, agent_capacity
+                );
+                addEdge(u, j, weight);
             }
         }
     }
@@ -199,9 +246,15 @@ public:
 
 
     int64_t firstSolution(const vector<vector<shared_ptr<Path > > >& cost_matrix,
-                          unordered_map<int, int>& out_TA_solution)
+                          unordered_map<int, int>& out_TA_solution,
+                          const unordered_map<int, int>& idx_to_ore,
+                          const vector<bool>& agent_status,
+                          const vector<int>& agent_past_path_cost,
+                          const vector<int>& agent_current_hold_ore,
+                          const vector<int>& agent_capacity)
     {
-        create_cost_matrix(cost_matrix);
+        create_cost_matrix(cost_matrix, idx_to_ore, agent_status,
+            agent_past_path_cost, agent_current_hold_ore, agent_capacity);
         for(int i=0;i<n;i++)
         {
             for(int j=0;j<n;j++)
@@ -222,9 +275,15 @@ public:
 
     int64_t incrementalSolutionX(const vector<vector<shared_ptr<Path > > >& cost_matrix,
                                  unordered_map<int, int>& out_TA_solution,
-                                const int & u)
+                                 const unordered_map<int, int>& idx_to_ore,
+                                 const vector<bool>& agent_status,
+                                 const vector<int>& agent_past_path_cost,
+                                 const vector<int>& agent_current_hold_ore,
+                                 const vector<int>& agent_capacity,
+                                 const int & u)
     {
-        create_cost_matrix(cost_matrix, u);
+        create_cost_matrix(cost_matrix, idx_to_ore, agent_status,
+            agent_past_path_cost, agent_current_hold_ore, agent_capacity, u);
         mateR[ mateL[u] ] = -1; mateL[u] = -1;
         lx[u] = -inf;
         for(int i=0;i<n;i++)

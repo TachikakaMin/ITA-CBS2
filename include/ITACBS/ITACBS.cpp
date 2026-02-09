@@ -32,7 +32,8 @@ public:
 ITACBS::ITACBS(int row_number, int col_number, unordered_set<Location>& obstacles,
            vector<unordered_set<Location> >& goals, vector<unordered_set<Location> >& dropoffGoals,
            vector<State>& start_states, vector<bool>& agent_status,
-           unordered_map<Location, int>& goal_to_idx, unordered_map<int, Location>& idx_to_goal,
+           vector<int>& agent_past_path_cost, vector<int>& agent_current_hold_ore, vector<int>& agent_capacity,
+           unordered_map<Location, int>& goal_to_idx, unordered_map<int, Location>& idx_to_goal, unordered_map<int, int>& idx_to_ore,
            unordered_map<Location, int>& start_to_idx, unordered_map<int, Location>& idx_to_start) {
     this->row_number = row_number;
     this->col_number = col_number;
@@ -43,9 +44,13 @@ ITACBS::ITACBS(int row_number, int col_number, unordered_set<Location>& obstacle
     this->dropoffGoals = dropoffGoals;
     this->goal_to_idx = goal_to_idx;
     this->idx_to_goal = idx_to_goal;
+    this->idx_to_ore = idx_to_ore;
     this->start_to_idx = start_to_idx;
     this->idx_to_start = idx_to_start;
     this->agent_status = agent_status;
+    this->agent_past_path_cost = agent_past_path_cost;
+    this->agent_current_hold_ore = agent_current_hold_ore;
+    this->agent_capacity = agent_capacity;
 
     this->ta_runtime = 0;
     this->total_runtime = 0;
@@ -374,10 +379,12 @@ int ITACBS::solve_with_back() {
 
         if (done)
         {
-            std::cout << "done; cost: " << cur_node->cost << std::endl;
+            int objective_throughput_scaled = -cur_node->cost;
+            double objective_throughput = objective_throughput_scaled / 1000.0;
+            std::cout << "done; throughput: " << objective_throughput << std::endl;
 //            for (int i=0;i<agent_n;i++) printf("%d->(%d, %d)\n", i, idx_to_goal[cur_node->out_TA_solution[i]].x, idx_to_goal[cur_node->out_TA_solution[i]].y);
             this->out_solution = cur_node->out_solution;
-            this->cost = cur_node->cost;
+            this->cost = objective_throughput;
             this->solution_found = true;
             return true;
         }
@@ -398,7 +405,7 @@ int ITACBS::solve_with_back() {
             cur_i ++;
             bool b = new_node->update_cost_matrix_with_back(this, key, value);
             if (b) {
-                this->num_ta_change += new_node->get_next_assignment(key);
+                this->num_ta_change += new_node->get_next_assignment(this, key);
             }
             open.push(new_node);
         }
@@ -406,5 +413,3 @@ int ITACBS::solve_with_back() {
     }
     return false;
 }
-
-

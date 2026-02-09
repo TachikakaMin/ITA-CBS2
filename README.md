@@ -9,13 +9,61 @@ Build:
 mkdir build
 cd build
 cmake ..
-cmake --build . --target ITACBS_remake
-cmake --build . --target CBSTA_remake
+cmake --build . --target ITACBS
+cmake --build . --target CBSTA
 ```
 
 Run:
 ```bash
-./ITACBS_remake -i ../map_file/debug_data.yaml -o ../outputs/output.yaml
+./ITACBS -i ../map_file/debug_data.yaml -o ../outputs/output.yaml
+```
+
+ITACBS Input (LTAPF style):
+```bash
+./ITACBS -i ../map_file/debug_data_LTAPF.yaml -o ../outputs/output_LTAPF.yaml
+```
+
+`main_ITACBS.cpp` now supports LTAPF-style `mapinfo` and reads these per-agent fields:
+- `isDroppingoff` (bool)
+- `pastPathCost` (int)
+- `currentHoldOre` (int)
+- `capacity` (int)
+
+And global ore info:
+- `mapinfo.potentialGoalsOre` -> mapped as `idx_to_ore` (goal index -> remaining ore)
+
+Hungarian scoring uses:
+- If agent goes to collect ore (`isDroppingoff == false`):
+  `x = min(remaining_ore_at_goal, agent_capacity)`
+  `score = x / (path_cost + agent_past_cost)`
+- If agent goes to dropoff (`isDroppingoff == true`):
+  `score = agent_current_hold_ore / (path_cost + agent_past_cost)`
+
+Implementation detail:
+- Hungarian internally solves minimization, so we minimize `-score` to maximize `score`.
+- Internal search keeps this signed value, but final reported `cost` is converted to positive throughput.
+
+Input note:
+- `agents[*].potentialGoals` is goal index list.
+- `agents[*].potentialDropoffGoals` supports both index list and coordinate list.
+- `mapinfo.map` supports either inline map or external `.map` filename.
+
+Event-Driven Ore Workflow (Python, standalone from LAMAPF-P code):
+```bash
+# 1) simulate: repeatedly call ITACBS; each pickup/dropoff event triggers replanning
+python python/itacbs_ore_workflow.py simulate \
+  --input map_file/debug_data_LTAPF.yaml \
+  --binary build/ITACBS \
+  --output outputs/itacbs_event_sim.json \
+  --work-dir outputs/itacbs_rounds \
+  --max-rounds 100 --max-steps 2000 --verbose
+
+# 2) replay simulation output (shows agents + ore remaining over time)
+python python/itacbs_ore_workflow.py replay --input outputs/itacbs_event_sim.json
+
+# 3) visual edit scenario (ore quantity / ore points / dropoff / agents)
+#    save will regenerate each agent's potentialGoals/potentialDropoffGoals as "all points"
+python python/itacbs_ore_workflow.py edit --input map_file/debug_data_LTAPF.yaml
 ```
 
 Generate test case:
@@ -110,4 +158,3 @@ Thank [@MinakoOikawa](https://twitter.com/minakooikawa) for providing the correc
   year={2024}
 }
 ```
-

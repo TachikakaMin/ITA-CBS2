@@ -21,8 +21,12 @@ public:
     vector<unordered_set<Location> > goals;
     vector<unordered_set<Location> > dropoffGoals;
     vector<bool> agent_status;
+    vector<int> agent_past_path_cost;
+    vector<int> agent_current_hold_ore;
+    vector<int> agent_capacity;
     unordered_map<Location, int> goal_to_idx;
     unordered_map<int, Location> idx_to_goal;
+    unordered_map<int, int> idx_to_ore;
     unordered_map<Location, int> start_to_idx;
     unordered_map<int, Location> idx_to_start;
     vector<vector<int> > map2d_obstacle;
@@ -31,7 +35,8 @@ public:
     vector<vector<bool> > assignment_allow_map;
     unordered_set<State, boost::hash<State> > closedSet;
     vector<shared_ptr<Path > > out_solution;
-    int cost, map_size, cbsnode_num, lowLevelExpanded, num_ta, num_ta_change;
+    double cost;
+    int map_size, cbsnode_num, lowLevelExpanded, num_ta, num_ta_change;
     int row_number, col_number;
 
 
@@ -42,7 +47,8 @@ public:
     ITACBS(int row_number, int col_number, unordered_set<Location>& obstacles,
            vector<unordered_set<Location> >& goals,vector<unordered_set<Location> >& dropoffGoals,
            vector<State>& start_states, vector<bool>& agent_status,
-           unordered_map<Location, int>& goal_to_idx, unordered_map<int, Location>& idx_to_goal,
+           vector<int>& agent_past_path_cost, vector<int>& agent_current_hold_ore, vector<int>& agent_capacity,
+           unordered_map<Location, int>& goal_to_idx, unordered_map<int, Location>& idx_to_goal, unordered_map<int, int>& idx_to_ore,
            unordered_map<Location, int>& start_to_idx, unordered_map<int, Location>& idx_to_start);
     void clear();
     int solve_with_back();
