@@ -6,5 +6,8 @@ python/PlanViz
 tmp*
 outputs/*
 .idea/*
-map_file/*
 .DS_Store
+python/__pycache__/
+.vscode/
+LAMAPF-P/
+output_LTAPF.yaml
