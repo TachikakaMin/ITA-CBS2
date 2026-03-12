@@ -63,7 +63,8 @@ bool ITACBSNode::get_first_assignment(ITACBS* pInstance) {
     this->cost = this->new_assignment.firstSolution(
         this->cost_matrix, this->out_TA_solution,
         pInstance->idx_to_ore, pInstance->agent_status, pInstance->agent_past_path_cost,
-        pInstance->agent_current_hold_ore, pInstance->agent_capacity
+        pInstance->agent_current_hold_ore, pInstance->agent_capacity,
+        pInstance->agent_current_target_goal
     );
     if (this->cost > BAD_TA_ANS) return 0;
     return this->cost;
@@ -204,6 +205,7 @@ bool ITACBSNode::get_next_assignment(ITACBS* pInstance, int agent_id) {
         this->cost_matrix, this->out_TA_solution,
         pInstance->idx_to_ore, pInstance->agent_status, pInstance->agent_past_path_cost,
         pInstance->agent_current_hold_ore, pInstance->agent_capacity,
+        pInstance->agent_current_target_goal,
         agent_id
     );
     int n = this->cost_matrix.size();

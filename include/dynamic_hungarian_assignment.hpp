@@ -18,6 +18,7 @@ public:
     long inf = std::numeric_limits<long>::max();
     long DHinf = 1e9;
     long SCORE_SCALE = 1000;
+    long TARGET_SWITCH_PENALTY = 50;
 
     DynamicHungarianAssignment(){}
 
@@ -48,7 +49,8 @@ public:
                                  const vector<bool>& agent_status,
                                  const vector<int>& agent_past_path_cost,
                                  const vector<int>& agent_current_hold_ore,
-                                 const vector<int>& agent_capacity) const {
+                                 const vector<int>& agent_capacity,
+                                 const vector<int>& agent_current_target_goal) const {
         if (cost_matrix[agent_id][goal_id] == nullptr) return DHinf;
 
         long path_cost = cost_matrix[agent_id][goal_id]->back().gScore;
@@ -57,24 +59,49 @@ public:
         long denominator = path_cost + past_cost;
         if (denominator <= 0) denominator = 1;
 
+        long hold_ore = (agent_id < static_cast<int>(agent_current_hold_ore.size()))
+            ? std::max(0, agent_current_hold_ore[agent_id]) : 0;
+        long capacity = (agent_id < static_cast<int>(agent_capacity.size()))
+            ? std::max(0, agent_capacity[agent_id]) : 0;
+
         long numerator = 0;
         bool is_dropoff = (agent_id < static_cast<int>(agent_status.size())) && agent_status[agent_id];
         if (is_dropoff) {
-            numerator = (agent_id < static_cast<int>(agent_current_hold_ore.size()))
-                ? std::max(0, agent_current_hold_ore[agent_id]) : 0;
+            numerator = hold_ore;
         } else {
             long ore_left = 0;
             auto it = idx_to_ore.find(goal_id);
             if (it != idx_to_ore.end()) ore_left = std::max(0, it->second);
-            long capacity = (agent_id < static_cast<int>(agent_capacity.size()))
-                ? std::max(0, agent_capacity[agent_id]) : 0;
             numerator = std::min(ore_left, capacity);
         }
 
-        if (numerator <= 0) return DHinf;
+        // Allow idle/empty-run assignments when no effective throughput is available.
+        // Returning 0 keeps the edge feasible (instead of impossible), with zero score.
+        if (numerator <= 0) return 0;
 
         long score = (numerator * SCORE_SCALE) / denominator;
         if (score <= 0) score = 1;
+
+        // Hysteresis: if previous target still has value, discourage switching.
+        if (agent_id < static_cast<int>(agent_current_target_goal.size())) {
+            int prev_goal = agent_current_target_goal[agent_id];
+            if (prev_goal >= 0 && prev_goal != goal_id) {
+                bool prev_target_has_value = false;
+                if (is_dropoff) {
+                    prev_target_has_value = hold_ore > 0;
+                } else {
+                    long prev_ore_left = 0;
+                    auto prev_it = idx_to_ore.find(prev_goal);
+                    if (prev_it != idx_to_ore.end()) prev_ore_left = std::max(0, prev_it->second);
+                    prev_target_has_value = std::min(prev_ore_left, capacity) > 0;
+                }
+                if (prev_target_has_value) {
+                    score = std::max(0L, score - TARGET_SWITCH_PENALTY);
+                }
+            }
+        }
+
+        if (score <= 0) return 0;
         return -score;
     }
 
@@ -195,6 +222,7 @@ public:
                             const vector<int>& agent_past_path_cost,
                             const vector<int>& agent_current_hold_ore,
                             const vector<int>& agent_capacity,
+                            const vector<int>& agent_current_target_goal,
                             int u = -1)
     {
         int n = cost_matrix.size();
@@ -204,7 +232,8 @@ public:
                 for (int j = 0; j < m; j++) {
                     long weight = compute_assignment_cost(
                         cost_matrix, i, j, idx_to_ore, agent_status,
-                        agent_past_path_cost, agent_current_hold_ore, agent_capacity
+                        agent_past_path_cost, agent_current_hold_ore, agent_capacity,
+                        agent_current_target_goal
                     );
                     addEdge(i, j, weight);
                 }
@@ -214,7 +243,8 @@ public:
             {
                 long weight = compute_assignment_cost(
                     cost_matrix, u, j, idx_to_ore, agent_status,
-                    agent_past_path_cost, agent_current_hold_ore, agent_capacity
+                    agent_past_path_cost, agent_current_hold_ore, agent_capacity,
+                    agent_current_target_goal
                 );
                 addEdge(u, j, weight);
             }
@@ -251,10 +281,11 @@ public:
                           const vector<bool>& agent_status,
                           const vector<int>& agent_past_path_cost,
                           const vector<int>& agent_current_hold_ore,
-                          const vector<int>& agent_capacity)
+                          const vector<int>& agent_capacity,
+                          const vector<int>& agent_current_target_goal)
     {
         create_cost_matrix(cost_matrix, idx_to_ore, agent_status,
-            agent_past_path_cost, agent_current_hold_ore, agent_capacity);
+            agent_past_path_cost, agent_current_hold_ore, agent_capacity, agent_current_target_goal);
         for(int i=0;i<n;i++)
         {
             for(int j=0;j<n;j++)
@@ -279,11 +310,12 @@ public:
                                  const vector<bool>& agent_status,
                                  const vector<int>& agent_past_path_cost,
                                  const vector<int>& agent_current_hold_ore,
-                                 const vector<int>& agent_capacity,
+                                  const vector<int>& agent_capacity,
+                                 const vector<int>& agent_current_target_goal,
                                  const int & u)
     {
         create_cost_matrix(cost_matrix, idx_to_ore, agent_status,
-            agent_past_path_cost, agent_current_hold_ore, agent_capacity, u);
+            agent_past_path_cost, agent_current_hold_ore, agent_capacity, agent_current_target_goal, u);
         mateR[ mateL[u] ] = -1; mateL[u] = -1;
         lx[u] = -inf;
         for(int i=0;i<n;i++)

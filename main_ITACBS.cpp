@@ -18,6 +18,7 @@ vector<bool> agent_status;
 vector<int> agent_past_path_cost;
 vector<int> agent_current_hold_ore;
 vector<int> agent_capacity;
+vector<int> agent_current_target_goal;
 unordered_map<Location, int> start_to_idx;
 unordered_map<int, Location> idx_to_start;
 vector<State> start_states;
@@ -150,6 +151,16 @@ int init_map(int argc, char** argv)
         else
             agent_capacity.push_back(0);
 
+        int current_target_goal_idx = -1;
+        if (node["currentTarget"] && node["currentTarget"].IsSequence() && node["currentTarget"].size() == 2) {
+            Location target(node["currentTarget"][0].as<int>(), node["currentTarget"][1].as<int>());
+            auto it = goal_to_idx.find(target);
+            if (it != goal_to_idx.end()) {
+                current_target_goal_idx = it->second;
+            }
+        }
+        agent_current_target_goal.push_back(current_target_goal_idx);
+
         start_states.emplace_back(State(0, start[0].as<int>(), start[1].as<int>()));
         goals.resize(goals.size() + 1);
         for (const auto &goal: node["potentialGoals"]) {
@@ -206,12 +217,13 @@ int main(int argc, char** argv) {
     if (init_map(argc, argv) < 0)
     {
         std::cout<< "Error Map" <<std::endl;
-        return 0;
+        return 1;
     }
     std::cout<< "Load Map Done" <<std::endl;
     ITACBS itacbs(row_number, col_number, obstacles,
         goals, dropoffGoals, start_states, agent_status,
         agent_past_path_cost, agent_current_hold_ore, agent_capacity,
+        agent_current_target_goal,
         goal_to_idx, idx_to_goal, idx_to_ore,
         start_to_idx, idx_to_start
     );

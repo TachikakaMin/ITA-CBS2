@@ -33,6 +33,7 @@ ITACBS::ITACBS(int row_number, int col_number, unordered_set<Location>& obstacle
            vector<unordered_set<Location> >& goals, vector<unordered_set<Location> >& dropoffGoals,
            vector<State>& start_states, vector<bool>& agent_status,
            vector<int>& agent_past_path_cost, vector<int>& agent_current_hold_ore, vector<int>& agent_capacity,
+           vector<int>& agent_current_target_goal,
            unordered_map<Location, int>& goal_to_idx, unordered_map<int, Location>& idx_to_goal, unordered_map<int, int>& idx_to_ore,
            unordered_map<Location, int>& start_to_idx, unordered_map<int, Location>& idx_to_start) {
     this->row_number = row_number;
@@ -51,6 +52,7 @@ ITACBS::ITACBS(int row_number, int col_number, unordered_set<Location>& obstacle
     this->agent_past_path_cost = agent_past_path_cost;
     this->agent_current_hold_ore = agent_current_hold_ore;
     this->agent_capacity = agent_capacity;
+    this->agent_current_target_goal = agent_current_target_goal;
 
     this->ta_runtime = 0;
     this->total_runtime = 0;
@@ -399,7 +401,9 @@ int ITACBS::solve_with_back() {
             if (cur_i == 1) {new_node = cur_node; new_node->idx = cnt_idx;}
                 else new_node = shared_ptr<ITACBSNode>(new ITACBSNode(cur_node, cnt_idx));
 
-            assert(!new_node->constraint_sets[key]->overlap(value));
+            if (new_node->constraint_sets[key]->overlap(value)) {
+                continue;
+            }
             new_node->constraint_sets[key] = shared_ptr<Constraints>(new Constraints(*(new_node->constraint_sets[key])));
             new_node->constraint_sets[key]->add(value);
             cur_i ++;
