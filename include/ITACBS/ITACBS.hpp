@@ -36,6 +36,8 @@ public:
     vector<vector<bool> > assignment_allow_map;
     unordered_set<State, boost::hash<State> > closedSet;
     vector<shared_ptr<Path > > out_solution;
+    // Final task assignment: agent id -> goal index in idx_to_goal.
+    unordered_map<int, int> out_TA_solution;
     double cost;
     int map_size, cbsnode_num, lowLevelExpanded, num_ta, num_ta_change;
     int row_number, col_number;

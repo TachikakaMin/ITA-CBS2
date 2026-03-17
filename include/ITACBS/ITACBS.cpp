@@ -19,6 +19,7 @@ void ITACBS::clear() {
     this->lowLevelExpanded = 0;
     this->num_ta = 0;
     this->num_ta_change = 0;
+    this->out_TA_solution.clear();
 }
 
 class PairCompare {
@@ -386,6 +387,8 @@ int ITACBS::solve_with_back() {
             std::cout << "done; throughput: " << objective_throughput << std::endl;
 //            for (int i=0;i<agent_n;i++) printf("%d->(%d, %d)\n", i, idx_to_goal[cur_node->out_TA_solution[i]].x, idx_to_goal[cur_node->out_TA_solution[i]].y);
             this->out_solution = cur_node->out_solution;
+            // Keep the final task assignment for YAML output.
+            this->out_TA_solution = cur_node->out_TA_solution;
             this->cost = objective_throughput;
             this->solution_found = true;
             return true;

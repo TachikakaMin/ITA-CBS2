@@ -48,6 +48,10 @@ Input note:
 - `agents[*].potentialDropoffGoals` supports both index list and coordinate list.
 - `mapinfo.map` supports either inline map or external `.map` filename.
 
+Output note:
+- ITACBS YAML includes `task_assignment` with per-agent `mode`, `goal_idx`, `goal` coordinates, and `ore`.
+- A `task_assignment_field_guide` map is emitted as inline documentation for those fields.
+
 Event-Driven Ore Workflow (Python, standalone from LAMAPF-P code):
 ```bash
 # 1) simulate: repeatedly call ITACBS; each pickup/dropoff event triggers replanning

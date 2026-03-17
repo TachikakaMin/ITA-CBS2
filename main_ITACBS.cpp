@@ -241,6 +241,38 @@ int main(int argc, char** argv) {
     out << "statistics:" << std::endl;
     out << "  cost: " << itacbs.cost << std::endl;
     out << "  teamSize: " << itacbs.out_solution.size() << std::endl;
+    // Emit per-agent task assignment (goal index + coordinates) for downstream tooling.
+    out << "task_assignment_field_guide:" << std::endl;
+    out << "  agent: \"Agent index.\"" << std::endl;
+    out << "  mode: \"pickup or dropoff based on current mission.\"" << std::endl;
+    out << "  goal_idx: \"Goal index in the global goal list (idx_to_goal).\"" << std::endl;
+    out << "  goal: \"Goal coordinate [x, y].\"" << std::endl;
+    out << "  ore: \"Ore amount at goal (0 for dropoff goals).\"" << std::endl;
+    out << "task_assignment:" << std::endl;
+    for (size_t a = 0; a < itacbs.agent_n; ++a) {
+        out << "  - agent: " << a << std::endl;
+        out << "    mode: " << (itacbs.agent_status[a] ? "dropoff" : "pickup") << std::endl;
+        auto it = itacbs.out_TA_solution.find(static_cast<int>(a));
+        if (it == itacbs.out_TA_solution.end()) {
+            out << "    goal_idx: -1" << std::endl;
+            out << "    goal: null" << std::endl;
+            continue;
+        }
+        int goal_idx = it->second;
+        out << "    goal_idx: " << goal_idx << std::endl;
+        auto loc_it = itacbs.idx_to_goal.find(goal_idx);
+        if (loc_it != itacbs.idx_to_goal.end()) {
+            out << "    goal:" << std::endl;
+            out << "      - " << loc_it->second.x << std::endl;
+            out << "      - " << loc_it->second.y << std::endl;
+        } else {
+            out << "    goal: null" << std::endl;
+        }
+        auto ore_it = itacbs.idx_to_ore.find(goal_idx);
+        if (ore_it != itacbs.idx_to_ore.end()) {
+            out << "    ore: " << ore_it->second << std::endl;
+        }
+    }
     out << "schedule: " << std::endl;
     for (size_t a = 0; a < itacbs.out_solution.size(); ++a) {
         out << "  agent" << a << ":" << std::endl;

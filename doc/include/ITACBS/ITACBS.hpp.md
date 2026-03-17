@@ -2,10 +2,11 @@
 
 - Source File: `ITA-CBS2/include/ITACBS/ITACBS.hpp`
 - Language: `C++`
-- Generated: `2026-03-05`
+- Generated: `2026-03-17`
 
 ## Purpose
 - Core data structures and search logic for the ITACBS algorithm.
+- Stores final task assignment mapping in `out_TA_solution` for output.
 
 ## Classes
 - `ITACBS`
