@@ -28,6 +28,29 @@ Generate test case:
 python python/generate_data_for_exp2.py --map_path map_file/Boston_0_256.map --output_dir map_file/Paper_boston_256_256_060 --common_ratio 0.6
 ```
 
+Dataset generation notes:
+
+- The generation scripts sample starts from all free cells in the map.
+- For maps with multiple connected components, each agent's `potentialGoals`
+  are sampled from the same connected component as that agent's start. This
+  prevents infeasible fixtures caused by unreachable goals.
+- For exp1, group-shared goals are generated within each connected component.
+- For exp2, common goals are component-local if starts are spread across
+  multiple connected components.
+- `generate_data_for_exp2.py` accepts optional agent range arguments:
+
+```bash
+python python/generate_data_for_exp2.py \
+  --map_path map_file/maze-32-32-2.map \
+  --output_dir map_file/paper_maze_32_32_2_ratio_000 \
+  --common_ratio 0.0 \
+  --agent_start 5 --agent_stop 35 --agent_step 5
+```
+
+The generated LaCAM-TAPF/ITA-CBS benchmark data is stored outside the repository
+at `/media/project0/yimin/lacam_tapf_itacbs_data` and symlinked into
+`map_file/`.
+
 Test:
 
 ```bash
@@ -110,4 +133,3 @@ Thank [@MinakoOikawa](https://twitter.com/minakooikawa) for providing the correc
   year={2024}
 }
 ```
-
