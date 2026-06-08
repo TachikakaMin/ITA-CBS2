@@ -86,8 +86,8 @@ if __name__ == "__main__":
         width = now_map[2].replace('\n', "").split(" ")[1]
         width = int(width)
         for i in range(height):
-            x = now_map[i + 4].replace("\n", "").replace(".", "0").replace("@", "1").replace("T", "1")
-            x = list(map(int, x))
+            row = now_map[i + 4].rstrip("\r\n")
+            x = [1 if ch in ("@", "T") else 0 for ch in row]
             map_data.append(x)
     map_data = np.array(map_data)
 
