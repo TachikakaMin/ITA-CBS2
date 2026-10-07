@@ -121,7 +121,6 @@ bool ITACBS::searchNodeIsValid(shared_ptr<Constraints>&  agent_constraint_set, c
 shared_ptr<Path> ITACBS::findPath_a_star(shared_ptr<Constraints>& agent_constraint_set, int agent_idx, int goal_loc_idx)
 {
 
-    int search_max = 1e5;
     int m_lastGoalConstraint = -1;
     closedSet.clear();
     unordered_map<State, PathEntryHandle , boost::hash<State> > stateToHeap;
@@ -146,9 +145,8 @@ shared_ptr<Path> ITACBS::findPath_a_star(shared_ptr<Constraints>& agent_constrai
     auto handle = openSet.push(startNode);
     stateToHeap.insert(make_pair(start_state, handle));
 
-    while (!openSet.empty() && search_max > 0) {
+    while (!openSet.empty()) {
         this->lowLevelExpanded ++;
-        search_max--;
         shared_ptr<PathEntry> current = openSet.top();
 
         if (current->state.x == goal_location.x && current->state.y == goal_location.y && current->state.time > m_lastGoalConstraint)
@@ -218,6 +216,16 @@ int ITACBS::solve() {
     while (!open.empty())
     {
         shared_ptr<ITACBSNode> cur_node = open.top(); open.pop();
+        // Hungarian may return a matching containing an unavailable path.
+        // Such a node has no feasible assignment and cannot be expanded.
+        bool assignment_feasible = cur_node->out_TA_solution.size() == static_cast<size_t>(agent_n);
+        for (int i = 0; i < agent_n && assignment_feasible; ++i) {
+            const auto it = cur_node->out_TA_solution.find(i);
+            assignment_feasible = it != cur_node->out_TA_solution.end() &&
+                it->second >= 0 && it->second < diff_goal_n &&
+                cur_node->cost_matrix[i][it->second] != nullptr;
+        }
+        if (!assignment_feasible) continue;
         Conflict conflict;
         this->firstconflict_timer.reset();
         bool done = !cur_node->get_first_conflict(conflict);
@@ -266,4 +274,3 @@ int ITACBS::solve() {
     }
     return false;
 }
-

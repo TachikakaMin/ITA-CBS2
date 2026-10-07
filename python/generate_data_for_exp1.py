@@ -69,8 +69,12 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--map_path", help="input file containing map")
     parser.add_argument("--output_dir", help="map output")
-    # parser.add_argument("--load_size", type=int, help="load_size")
+    parser.add_argument("--agent_start", type=int, default=10)
+    parser.add_argument("--agent_stop", type=int, default=200)
+    parser.add_argument("--agent_step", type=int, default=10)
     args = parser.parse_args()
+    if args.agent_start < 1 or args.agent_step < 1 or args.agent_stop < args.agent_start:
+        parser.error("invalid agent range")
 
     if not os.path.exists(args.output_dir):
         os.mkdir(args.output_dir)
@@ -94,7 +98,7 @@ if __name__ == "__main__":
     good_points, component_id, components = connected_component_points(map_data)
 
     group_size = 5
-    for agent_num in range(10, 205, 10):
+    for agent_num in range(args.agent_start, args.agent_stop + 1, args.agent_step):
         for test_idx in range(20):
             random_idx = np.random.choice(good_points.shape[0], agent_num, replace=False)
             agent_startP = good_points[random_idx]

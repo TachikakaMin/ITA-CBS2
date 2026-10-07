@@ -8,3 +8,6 @@ outputs/*
 .idea/*
 map_file/*
 .DS_Store
+
+# Python generator caches
+__pycache__/

@@ -21,7 +21,7 @@ file(GLOB THIRD_PARTY "third_party/*.cpp" "third_party/*.h")
 add_executable(ITACBS_remake main_ITACBS.cpp include/common.hpp include/ITACBS/ITACBS.hpp include/ITACBS/ITACBS.cpp include/ITACBS/ITACBSNode.hpp include/ITACBS/ITACBSNode.cpp include/dynamic_hungarian_assignment.hpp include/common.cpp)
 target_link_libraries(ITACBS_remake
         ${Boost_LIBRARIES}
-        yaml-cpp
+        yaml-cpp::yaml-cpp
         )
 
 

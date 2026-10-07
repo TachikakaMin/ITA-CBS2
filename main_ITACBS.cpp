@@ -2,6 +2,8 @@
 #include <boost/program_options.hpp>
 #include <boost/tokenizer.hpp>
 #include <string>
+#include <sys/time.h>
+#include <cstdlib>
 #include <yaml-cpp/yaml.h>
 #include "include/ITACBS/ITACBS.hpp"
 #include "include/common.hpp"
@@ -29,6 +31,7 @@ int init_map(int argc, char** argv)
             ("output,o", po::value<std::string>(&outputFile)->required(), "output file (YAML)")
             ("nodeLimit", po::value<int>()->default_value(MAX_NODES), "node limit")
             ("seed,d", po::value<int>()->default_value(0), "random seed")
+            ("time-limit-sec", po::value<double>()->default_value(0), "wall-clock solve limit, excluding map/heuristic initialization; 0 disables")
             ("stats", po::value<bool>()->default_value(false), "write to files some statistics")
             ("restart", po::value<int>()->default_value(1), "number of restart times (at least 1)");
 
@@ -117,12 +120,22 @@ int main(int argc, char** argv) {
     }
     std::cout<< "Load Map Done" <<std::endl;
     ITACBS itacbs(row_number, col_number, obstacles, goals, start_states, goal_to_idx, idx_to_goal);
+    std::srand(vm["seed"].as<int>());
 
     int runs = vm["restart"].as<int>();
     for (int i = 0; i < runs; i++) {
         itacbs.clear();
         itacbs.total_timer.reset();
+        const double limit = vm["time-limit-sec"].as<double>();
+        struct itimerval timer{};
+        if (limit > 0) {
+            timer.it_value.tv_sec = static_cast<long>(limit);
+            timer.it_value.tv_usec = static_cast<long>((limit - timer.it_value.tv_sec) * 1000000);
+            setitimer(ITIMER_REAL, &timer, nullptr);
+        }
         itacbs.solve();
+        timer = {};
+        setitimer(ITIMER_REAL, &timer, nullptr);
         itacbs.total_timer.stop();
         itacbs.total_runtime = itacbs.total_timer.elapsedSeconds();
         if (itacbs.solution_found) break;
